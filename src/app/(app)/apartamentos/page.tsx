@@ -1,7 +1,7 @@
 import { PageHeader } from "@/components/ui/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { SetupNotice } from "@/components/SetupNotice";
-import { PopoverForm } from "@/components/PopoverForm";
+import { ModalForm } from "@/components/ModalForm";
 import { supabaseConfigurado } from "@/lib/supabase/admin";
 import { listApartamentos } from "@/lib/data/apartamentos";
 import { REGIOES, REGIAO_LABEL } from "@/lib/constants";
@@ -16,51 +16,51 @@ export const dynamic = "force-dynamic";
 
 function LinhaEditar({ a }: { a: Apartamento }) {
   return (
-    <PopoverForm
+    <ModalForm
       label="Editar"
+      title={`Editar ${a.codigo}`}
       action={atualizarApartamento}
-      floating={false}
       buttonClassName="cursor-pointer text-xs text-slate-500 hover:underline"
-      formClassName="mt-2 grid grid-cols-2 gap-2 rounded-lg bg-slate-50 p-3"
+      formClassName="grid grid-cols-2 gap-3"
     >
       <input type="hidden" name="id" value={a.id} />
-        <div>
-          <label className="label">Código</label>
-          <input name="codigo" defaultValue={a.codigo} className="input py-1" />
-        </div>
-        <div>
-          <label className="label">Região</label>
-          <select name="regiao" defaultValue={a.regiao} className="input py-1">
-            {REGIOES.map((r) => (
-              <option key={r} value={r}>
-                {REGIAO_LABEL[r]}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="col-span-2">
-          <label className="label">Descrição</label>
-          <input
-            name="descricao"
-            defaultValue={a.descricao ?? ""}
-            className="input py-1"
-          />
-        </div>
-        <div>
-          <label className="label">Estado</label>
-          <select
-            name="ativo"
-            defaultValue={a.ativo ? "true" : "false"}
-            className="input py-1"
-          >
-            <option value="true">Ativo</option>
-            <option value="false">Inativo</option>
-          </select>
-        </div>
-        <div className="flex items-end justify-end">
-          <button className="btn-primary px-3 py-1.5 text-xs">Guardar</button>
-        </div>
-    </PopoverForm>
+      <div>
+        <label className="label">Código</label>
+        <input name="codigo" defaultValue={a.codigo} className="input" />
+      </div>
+      <div>
+        <label className="label">Região</label>
+        <select name="regiao" defaultValue={a.regiao} className="input">
+          {REGIOES.map((r) => (
+            <option key={r} value={r}>
+              {REGIAO_LABEL[r]}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="col-span-2">
+        <label className="label">Descrição</label>
+        <input
+          name="descricao"
+          defaultValue={a.descricao ?? ""}
+          className="input"
+        />
+      </div>
+      <div>
+        <label className="label">Estado</label>
+        <select
+          name="ativo"
+          defaultValue={a.ativo ? "true" : "false"}
+          className="input"
+        >
+          <option value="true">Ativo</option>
+          <option value="false">Inativo</option>
+        </select>
+      </div>
+      <div className="col-span-2 flex justify-end">
+        <button className="btn-primary">Guardar</button>
+      </div>
+    </ModalForm>
   );
 }
 
@@ -100,12 +100,11 @@ export default async function ApartamentosPage({
         titulo="Apartamentos"
         descricao={`${apartamentos.length} apartamentos · fonte de verdade para seletores e validação`}
         acao={
-          <PopoverForm
+          <ModalForm
             label="+ Adicionar"
+            title="Adicionar apartamento"
             action={criarApartamento}
             buttonClassName="btn-primary"
-            panelClassName="w-80"
-            formClassName="space-y-3"
           >
             <div>
               <label className="label">Código *</label>
@@ -128,7 +127,7 @@ export default async function ApartamentosPage({
             <div className="flex justify-end">
               <button className="btn-primary">Adicionar</button>
             </div>
-          </PopoverForm>
+          </ModalForm>
         }
       />
 

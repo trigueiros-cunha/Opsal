@@ -1,7 +1,7 @@
 import { PageHeader } from "@/components/ui/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { SetupNotice } from "@/components/SetupNotice";
-import { PopoverForm } from "@/components/PopoverForm";
+import { ModalForm } from "@/components/ModalForm";
 import { Avatar } from "@/components/ui/Avatar";
 import { supabaseConfigurado } from "@/lib/supabase/admin";
 import { cargaPorTecnico, listTecnicos } from "@/lib/data/tecnicos";
@@ -81,18 +81,17 @@ export default async function TecnicosPage() {
         titulo="Técnicos"
         descricao="Recurso: especialidade, contacto, custo/hora. A carga conta incidências ativas."
         acao={
-          <PopoverForm
+          <ModalForm
             label="+ Novo técnico"
+            title="Novo técnico"
             action={criarTecnico}
             buttonClassName="btn-primary"
-            panelClassName="w-96"
-            formClassName="space-y-3"
           >
             <CampoTecnico />
             <div className="flex justify-end">
               <button className="btn-primary">Criar</button>
             </div>
-          </PopoverForm>
+          </ModalForm>
         }
       />
 
@@ -140,14 +139,12 @@ export default async function TecnicosPage() {
                 <p className="mt-2 text-xs text-slate-500">{t.contacto}</p>
               ) : null}
 
-              <div className="mt-3 flex items-center gap-2 border-t border-slate-100 pt-3">
-                <PopoverForm
+              <div className="mt-3 flex items-center justify-between gap-2 border-t border-slate-100 pt-3">
+                <ModalForm
                   label="Editar"
+                  title={`Editar ${t.nome}`}
                   action={atualizarTecnico}
-                  floating={false}
-                  className="flex-1"
                   buttonClassName="cursor-pointer text-xs text-slate-500 hover:underline"
-                  formClassName="mt-3 space-y-3"
                 >
                   <input type="hidden" name="id" value={t.id} />
                   <CampoTecnico t={t} />
@@ -155,16 +152,14 @@ export default async function TecnicosPage() {
                     <select
                       name="ativo"
                       defaultValue={t.ativo ? "true" : "false"}
-                      className="input w-28 py-1 text-xs"
+                      className="input w-32"
                     >
                       <option value="true">Ativo</option>
                       <option value="false">Inativo</option>
                     </select>
-                    <button className="btn-primary px-3 py-1.5 text-xs">
-                      Guardar
-                    </button>
+                    <button className="btn-primary">Guardar</button>
                   </div>
-                </PopoverForm>
+                </ModalForm>
                 <form action={alternarAtivoTecnico}>
                   <input type="hidden" name="id" value={t.id} />
                   <input type="hidden" name="ativo" value={String(t.ativo)} />
