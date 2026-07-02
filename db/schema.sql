@@ -102,6 +102,14 @@ create index if not exists incidencias_apartamento_idx on incidencias (apartamen
 create index if not exists incidencias_tecnico_idx on incidencias (tecnico_id);
 create index if not exists incidencias_aberta_em_idx on incidencias (aberta_em desc);
 
+-- import (idempotência do import de Excel): assinatura CASA+DATA+PROBLEMA.
+-- Índice único NÃO parcial: em Postgres os NULL são distintos, por isso
+-- incidências criadas à mão (import_ref NULL) não colidem, e o upsert
+-- ON CONFLICT (import_ref) funciona.
+alter table incidencias add column if not exists import_ref text;
+create unique index if not exists incidencias_import_ref_key
+  on incidencias (import_ref);
+
 -- ── incidencia_custos ────────────────────────────────────────────────────────
 create table if not exists incidencia_custos (
   id             uuid primary key default gen_random_uuid(),

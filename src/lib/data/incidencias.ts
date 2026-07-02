@@ -121,4 +121,26 @@ export async function contarResolvidasDesde(dias: number): Promise<number> {
   return count ?? 0;
 }
 
+/** Dado um conjunto de import_refs, devolve os que já existem na base. */
+export async function getImportRefsExistentes(
+  refs: string[],
+): Promise<Set<string>> {
+  const existentes = new Set<string>();
+  const CHUNK = 200;
+  for (let i = 0; i < refs.length; i += CHUNK) {
+    const bloco = refs.slice(i, i + CHUNK);
+    if (bloco.length === 0) continue;
+    const { data, error } = await supabaseAdmin()
+      .from("incidencias")
+      .select("import_ref")
+      .in("import_ref", bloco);
+    if (error) throw error;
+    for (const r of data ?? []) {
+      const v = (r as { import_ref: string | null }).import_ref;
+      if (v) existentes.add(v);
+    }
+  }
+  return existentes;
+}
+
 export type IncidenciaBase = Incidencia;

@@ -50,9 +50,14 @@ export default async function IncidenciasPage({
         titulo="Incidências"
         descricao={`${incidencias.length} ${incidencias.length === 1 ? "resultado" : "resultados"}`}
         acao={
-          <Link href="/incidencias/nova" className="btn-primary">
-            + Nova incidência
-          </Link>
+          <>
+            <Link href="/incidencias/importar" className="btn-secondary">
+              Importar
+            </Link>
+            <Link href="/incidencias/nova" className="btn-primary">
+              + Nova incidência
+            </Link>
+          </>
         }
       />
 
