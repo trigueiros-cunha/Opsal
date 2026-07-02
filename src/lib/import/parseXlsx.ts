@@ -25,7 +25,22 @@ function escolherFolha(nomes: string[]): string | null {
   return null;
 }
 
-/** Lê a folha de manutenções e devolve uma linha por registo (texto). */
+/** Índice da linha de cabeçalhos (contém PROBLEMA, ou CASA+DATA). -1 se não houver. */
+function encontrarCabecalho(matriz: unknown[][]): number {
+  const limite = Math.min(matriz.length, 30);
+  for (let i = 0; i < limite; i++) {
+    const cells = (matriz[i] ?? []).map((c) => normNome(String(c ?? "")));
+    const temProblema = cells.includes("problema");
+    const temCasaData = cells.includes("casa") && cells.includes("data");
+    if (temProblema || temCasaData) return i;
+  }
+  return -1;
+}
+
+/**
+ * Lê a folha de manutenções e devolve uma linha por registo (valores em texto).
+ * Deteta a linha de cabeçalhos automaticamente (salta título/banner por cima).
+ */
 export function parseFicheiro(dados: Uint8Array): LinhaCrua[] {
   const wb = XLSX.read(dados, { type: "array" });
   const nome = escolherFolha(wb.SheetNames);
@@ -35,16 +50,35 @@ export function parseFicheiro(dados: Uint8Array): LinhaCrua[] {
         `Folhas no ficheiro: ${wb.SheetNames.join(", ")}.`,
     );
   }
-  const folha = wb.Sheets[nome];
-  const cruas = XLSX.utils.sheet_to_json<Record<string, unknown>>(folha, {
-    raw: false, // datas/números como texto tal como mostrados
+
+  const matriz = XLSX.utils.sheet_to_json<unknown[]>(wb.Sheets[nome], {
+    header: 1,
+    raw: false,
     defval: "",
+    blankrows: false,
   });
-  return cruas.map((l) => {
+
+  const idxCab = encontrarCabecalho(matriz);
+  if (idxCab < 0) {
+    throw new Error(
+      `Não encontrei a linha de cabeçalho (DATA/CASA/PROBLEMA) na folha "${nome}".`,
+    );
+  }
+
+  const cabecalhos = (matriz[idxCab] ?? []).map((c) => String(c ?? "").trim());
+
+  const linhas: LinhaCrua[] = [];
+  for (let r = idxCab + 1; r < matriz.length; r++) {
+    const bruta = matriz[r] ?? [];
     const out: LinhaCrua = {};
-    for (const [k, v] of Object.entries(l)) {
-      out[k.trim()] = String(v ?? "").trim();
-    }
-    return out;
-  });
+    let temAlgum = false;
+    cabecalhos.forEach((h, c) => {
+      if (!h) return;
+      const v = String(bruta[c] ?? "").trim();
+      out[h] = v;
+      if (v) temAlgum = true;
+    });
+    if (temAlgum) linhas.push(out);
+  }
+  return linhas;
 }

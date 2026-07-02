@@ -24,6 +24,33 @@ describe("parseFicheiro", () => {
     expect(linhas[0]["PROBLEMA"]).toBe("porta partida");
   });
 
+  it("salta linhas de título por cima dos cabeçalhos", () => {
+    const bytes = livro({
+      Folha1: [
+        ["Tabela de Manutenções — Julho", "", "", ""],
+        ["", "", "", ""],
+        CAB,
+        ["02/07/2026", "ALMAD2", "problema certo", "Não"],
+      ],
+    });
+    const linhas = parseFicheiro(bytes);
+    expect(linhas).toHaveLength(1);
+    expect(linhas[0]["PROBLEMA"]).toBe("problema certo");
+    expect(linhas[0]["CASA"]).toBe("ALMAD2");
+  });
+
+  it("ignora linhas totalmente vazias entre os dados", () => {
+    const bytes = livro({
+      Folha1: [
+        CAB,
+        ["02/07/2026", "ALMAD2", "um", "Não"],
+        ["", "", "", ""],
+        ["03/07/2026", "ALMAD2", "dois", "Sim"],
+      ],
+    });
+    expect(parseFicheiro(bytes)).toHaveLength(2);
+  });
+
   it("escolhe a folha de manutenções e ignora a 'arquivo'", () => {
     const bytes = livro({
       arquivo: [CAB, ["01/01/2020", "ZZZ99", "linha do arquivo", "Sim"]],
@@ -37,13 +64,13 @@ describe("parseFicheiro", () => {
     expect(linhas[0]["PROBLEMA"]).toBe("problema certo");
   });
 
-  it("ficheiro de folha única sem match usa essa folha", () => {
-    const bytes = livro({ QualquerNome: [CAB] });
-    expect(parseFicheiro(bytes)).toHaveLength(0);
+  it("várias folhas sem nenhuma de manutenções → erro claro", () => {
+    const bytes = livro({ arquivo: [["x"]], notas: [["y"]] });
+    expect(() => parseFicheiro(bytes)).toThrow(/tabela de manuten/i);
   });
 
-  it("várias folhas sem nenhuma de manutenções → erro claro", () => {
-    const bytes = livro({ arquivo: [CAB], notas: [CAB] });
-    expect(() => parseFicheiro(bytes)).toThrow(/tabela de manuten/i);
+  it("folha única sem cabeçalhos reconhecíveis → erro claro", () => {
+    const bytes = livro({ Folha1: [["ola", "mundo"], ["1", "2"]] });
+    expect(() => parseFicheiro(bytes)).toThrow(/cabeçalho/i);
   });
 });
