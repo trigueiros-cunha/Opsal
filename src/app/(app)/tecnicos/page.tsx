@@ -1,6 +1,7 @@
 import { PageHeader } from "@/components/ui/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { SetupNotice } from "@/components/SetupNotice";
+import { PopoverForm } from "@/components/PopoverForm";
 import { Avatar } from "@/components/ui/Avatar";
 import { supabaseConfigurado } from "@/lib/supabase/admin";
 import { cargaPorTecnico, listTecnicos } from "@/lib/data/tecnicos";
@@ -80,19 +81,18 @@ export default async function TecnicosPage() {
         titulo="Técnicos"
         descricao="Recurso: especialidade, contacto, custo/hora. A carga conta incidências ativas."
         acao={
-          <details className="group relative">
-            <summary className="btn-primary cursor-pointer list-none">
-              + Novo técnico
-            </summary>
-            <div className="absolute right-0 z-10 mt-2 w-96 rounded-xl border border-slate-200 bg-white p-4 shadow-lg">
-              <form action={criarTecnico} className="space-y-3">
-                <CampoTecnico />
-                <div className="flex justify-end">
-                  <button className="btn-primary">Criar</button>
-                </div>
-              </form>
+          <PopoverForm
+            label="+ Novo técnico"
+            action={criarTecnico}
+            buttonClassName="btn-primary"
+            panelClassName="w-96"
+            formClassName="space-y-3"
+          >
+            <CampoTecnico />
+            <div className="flex justify-end">
+              <button className="btn-primary">Criar</button>
             </div>
-          </details>
+          </PopoverForm>
         }
       />
 
@@ -141,28 +141,30 @@ export default async function TecnicosPage() {
               ) : null}
 
               <div className="mt-3 flex items-center gap-2 border-t border-slate-100 pt-3">
-                <details className="flex-1">
-                  <summary className="cursor-pointer text-xs text-slate-500 hover:underline">
-                    Editar
-                  </summary>
-                  <form action={atualizarTecnico} className="mt-3 space-y-3">
-                    <input type="hidden" name="id" value={t.id} />
-                    <CampoTecnico t={t} />
-                    <div className="flex items-center justify-between">
-                      <select
-                        name="ativo"
-                        defaultValue={t.ativo ? "true" : "false"}
-                        className="input w-28 py-1 text-xs"
-                      >
-                        <option value="true">Ativo</option>
-                        <option value="false">Inativo</option>
-                      </select>
-                      <button className="btn-primary px-3 py-1.5 text-xs">
-                        Guardar
-                      </button>
-                    </div>
-                  </form>
-                </details>
+                <PopoverForm
+                  label="Editar"
+                  action={atualizarTecnico}
+                  floating={false}
+                  className="flex-1"
+                  buttonClassName="cursor-pointer text-xs text-slate-500 hover:underline"
+                  formClassName="mt-3 space-y-3"
+                >
+                  <input type="hidden" name="id" value={t.id} />
+                  <CampoTecnico t={t} />
+                  <div className="flex items-center justify-between">
+                    <select
+                      name="ativo"
+                      defaultValue={t.ativo ? "true" : "false"}
+                      className="input w-28 py-1 text-xs"
+                    >
+                      <option value="true">Ativo</option>
+                      <option value="false">Inativo</option>
+                    </select>
+                    <button className="btn-primary px-3 py-1.5 text-xs">
+                      Guardar
+                    </button>
+                  </div>
+                </PopoverForm>
                 <form action={alternarAtivoTecnico}>
                   <input type="hidden" name="id" value={t.id} />
                   <input type="hidden" name="ativo" value={String(t.ativo)} />

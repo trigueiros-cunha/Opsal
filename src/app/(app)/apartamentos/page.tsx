@@ -1,6 +1,7 @@
 import { PageHeader } from "@/components/ui/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { SetupNotice } from "@/components/SetupNotice";
+import { PopoverForm } from "@/components/PopoverForm";
 import { supabaseConfigurado } from "@/lib/supabase/admin";
 import { listApartamentos } from "@/lib/data/apartamentos";
 import { REGIOES, REGIAO_LABEL } from "@/lib/constants";
@@ -15,15 +16,14 @@ export const dynamic = "force-dynamic";
 
 function LinhaEditar({ a }: { a: Apartamento }) {
   return (
-    <details>
-      <summary className="cursor-pointer text-xs text-slate-500 hover:underline">
-        Editar
-      </summary>
-      <form
-        action={atualizarApartamento}
-        className="mt-2 grid grid-cols-2 gap-2 rounded-lg bg-slate-50 p-3"
-      >
-        <input type="hidden" name="id" value={a.id} />
+    <PopoverForm
+      label="Editar"
+      action={atualizarApartamento}
+      floating={false}
+      buttonClassName="cursor-pointer text-xs text-slate-500 hover:underline"
+      formClassName="mt-2 grid grid-cols-2 gap-2 rounded-lg bg-slate-50 p-3"
+    >
+      <input type="hidden" name="id" value={a.id} />
         <div>
           <label className="label">Código</label>
           <input name="codigo" defaultValue={a.codigo} className="input py-1" />
@@ -60,8 +60,7 @@ function LinhaEditar({ a }: { a: Apartamento }) {
         <div className="flex items-end justify-end">
           <button className="btn-primary px-3 py-1.5 text-xs">Guardar</button>
         </div>
-      </form>
-    </details>
+    </PopoverForm>
   );
 }
 
@@ -101,36 +100,35 @@ export default async function ApartamentosPage({
         titulo="Apartamentos"
         descricao={`${apartamentos.length} apartamentos · fonte de verdade para seletores e validação`}
         acao={
-          <details className="group relative">
-            <summary className="btn-primary cursor-pointer list-none">
-              + Adicionar
-            </summary>
-            <div className="absolute right-0 z-10 mt-2 w-80 rounded-xl border border-slate-200 bg-white p-4 shadow-lg">
-              <form action={criarApartamento} className="space-y-3">
-                <div>
-                  <label className="label">Código *</label>
-                  <input name="codigo" required className="input" placeholder="ACM021" />
-                </div>
-                <div>
-                  <label className="label">Região *</label>
-                  <select name="regiao" required className="input">
-                    {REGIOES.map((r) => (
-                      <option key={r} value={r}>
-                        {REGIAO_LABEL[r]}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="label">Descrição</label>
-                  <input name="descricao" className="input" />
-                </div>
-                <div className="flex justify-end">
-                  <button className="btn-primary">Adicionar</button>
-                </div>
-              </form>
+          <PopoverForm
+            label="+ Adicionar"
+            action={criarApartamento}
+            buttonClassName="btn-primary"
+            panelClassName="w-80"
+            formClassName="space-y-3"
+          >
+            <div>
+              <label className="label">Código *</label>
+              <input name="codigo" required className="input" placeholder="ACM021" />
             </div>
-          </details>
+            <div>
+              <label className="label">Região *</label>
+              <select name="regiao" required className="input">
+                {REGIOES.map((r) => (
+                  <option key={r} value={r}>
+                    {REGIAO_LABEL[r]}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="label">Descrição</label>
+              <input name="descricao" className="input" />
+            </div>
+            <div className="flex justify-end">
+              <button className="btn-primary">Adicionar</button>
+            </div>
+          </PopoverForm>
         }
       />
 
