@@ -167,6 +167,34 @@ export async function mudarEstado(formData: FormData) {
   revalidatePath("/");
 }
 
+// ── Apagar ────────────────────────────────────────────────────────────────────
+export async function apagarIncidencia(formData: FormData) {
+  await exigirSessao();
+  const id = str(formData.get("id"));
+  if (!id) throw new Error("id em falta");
+
+  const db = supabaseAdmin();
+
+  // Limpar ficheiros do Storage; os registos de fotos/custos caem por cascade.
+  const { data: fotos } = await db
+    .from("fotos")
+    .select("storage_path")
+    .eq("incidencia_id", id);
+  const paths = (fotos ?? [])
+    .map((f) => (f as { storage_path: string | null }).storage_path)
+    .filter((p): p is string => Boolean(p));
+  if (paths.length > 0) {
+    await db.storage.from(FOTOS_BUCKET).remove(paths);
+  }
+
+  const { error } = await db.from("incidencias").delete().eq("id", id);
+  if (error) throw error;
+
+  revalidatePath("/incidencias");
+  revalidatePath("/");
+  redirect("/incidencias");
+}
+
 // ── Custos ────────────────────────────────────────────────────────────────────
 export async function adicionarCusto(formData: FormData) {
   await exigirSessao();

@@ -11,6 +11,7 @@ import { listTecnicos } from "@/lib/data/tecnicos";
 import { ORIGENS, ORIGEM_LABEL, PRIORIDADES, PRIORIDADE_LABEL } from "@/lib/constants";
 import { formatDataHora } from "@/lib/format";
 import { EstadoControls } from "./EstadoControls";
+import { ApagarIncidencia } from "./ApagarIncidencia";
 import {
   adicionarCusto,
   atualizarCusto,
@@ -186,6 +187,8 @@ export default async function IncidenciaDetalhe({
               <p className="mt-1 text-sm text-slate-600">{inc.notas_resolucao}</p>
             </div>
           ) : null}
+
+          <ApagarIncidencia id={inc.id} />
         </div>
       </div>
     </>
