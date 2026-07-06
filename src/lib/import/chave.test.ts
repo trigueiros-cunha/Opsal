@@ -20,9 +20,19 @@ describe("chave", () => {
     expect(dataParaIso("2/7/2026")).toBe("2026-07-02");
   });
 
+  it("aceita variantes de data", () => {
+    expect(dataParaIso("2026-07-02")).toBe("2026-07-02"); // ISO
+    expect(dataParaIso("02-07-2026")).toBe("2026-07-02"); // traços
+    expect(dataParaIso("2.7.2026")).toBe("2026-07-02"); // pontos
+    expect(dataParaIso("02/07/26")).toBe("2026-07-02"); // ano 2 dígitos
+    expect(dataParaIso("02/07/2026 00:00")).toBe("2026-07-02"); // com hora
+    expect(dataParaIso("46205")).toBe("2026-07-02"); // série Excel
+  });
+
   it("rejeita datas inválidas", () => {
     expect(dataParaIso("31/02/2026")).toBeNull();
-    expect(dataParaIso("2026-07-02")).toBeNull();
+    expect(dataParaIso("13/13/2026")).toBeNull();
+    expect(dataParaIso("xx")).toBeNull();
     expect(dataParaIso("")).toBeNull();
   });
 

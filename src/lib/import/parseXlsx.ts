@@ -9,6 +9,15 @@ function normNome(s: string): string {
     .replace(/[̀-ͯ]/g, "");
 }
 
+/** Converte uma célula (texto, número ou Data do Excel) em texto. Datas → ISO. */
+function celParaTexto(v: unknown): string {
+  if (v == null) return "";
+  if (v instanceof Date) {
+    return `${v.getUTCFullYear()}-${String(v.getUTCMonth() + 1).padStart(2, "0")}-${String(v.getUTCDate()).padStart(2, "0")}`;
+  }
+  return String(v).trim();
+}
+
 /**
  * Escolhe a folha "tabela de manutenções" (ignora "arquivo" e outras).
  * Se o ficheiro só tiver uma folha, usa-a. Se houver várias e nenhuma de
@@ -39,9 +48,12 @@ function encontrarCabecalho(matriz: unknown[][]): number {
 
 /**
  * Lê a folha de manutenções e devolve uma linha por registo (valores em texto).
- * Deteta a linha de cabeçalhos automaticamente (salta título/banner por cima).
+ * Deteta a linha de cabeçalhos (salta título/banner por cima) e lê as datas
+ * como datas reais (cellDates), convertendo-as para ISO.
  */
 export function parseFicheiro(dados: Uint8Array): LinhaCrua[] {
+  // Sem cellDates: as datas ficam como número de série do Excel, que o
+  // dataParaIso converte com matemática UTC (à prova de fusos horários).
   const wb = XLSX.read(dados, { type: "array" });
   const nome = escolherFolha(wb.SheetNames);
   if (!nome) {
@@ -53,7 +65,7 @@ export function parseFicheiro(dados: Uint8Array): LinhaCrua[] {
 
   const matriz = XLSX.utils.sheet_to_json<unknown[]>(wb.Sheets[nome], {
     header: 1,
-    raw: false,
+    raw: true,
     defval: "",
     blankrows: false,
   });
@@ -74,7 +86,7 @@ export function parseFicheiro(dados: Uint8Array): LinhaCrua[] {
     let temAlgum = false;
     cabecalhos.forEach((h, c) => {
       if (!h) return;
-      const v = String(bruta[c] ?? "").trim();
+      const v = celParaTexto(bruta[c]);
       out[h] = v;
       if (v) temAlgum = true;
     });

@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import * as XLSX from "xlsx";
 import { parseFicheiro } from "@/lib/import/parseXlsx";
+import { dataParaIso } from "@/lib/import/chave";
 
 function livro(folhas: Record<string, string[][]>): Uint8Array {
   const wb = XLSX.utils.book_new();
@@ -49,6 +50,17 @@ describe("parseFicheiro", () => {
       ],
     });
     expect(parseFicheiro(bytes)).toHaveLength(2);
+  });
+
+  it("lê datas do Excel como série e dataParaIso converte para ISO", () => {
+    // 46205 = número de série do Excel para 2026-07-02.
+    const ws = XLSX.utils.aoa_to_sheet([CAB, [46205, "ALMAD2", "x", "Não"]]);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Folha1");
+    const buf = XLSX.write(wb, { type: "array", bookType: "xlsx" }) as ArrayBuffer;
+    const linhas = parseFicheiro(new Uint8Array(buf));
+    expect(linhas).toHaveLength(1);
+    expect(dataParaIso(linhas[0]["DATA"])).toBe("2026-07-02");
   });
 
   it("escolhe a folha de manutenções e ignora a 'arquivo'", () => {
