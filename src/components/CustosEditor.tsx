@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
   CUSTO_TIPOS,
@@ -42,6 +42,12 @@ export function CustosEditor({
 
   // Estado local para totais em tempo real durante a edição.
   const [rows, setRows] = useState<CustoRow[]>(custos);
+
+  // Re-sincronizar quando o servidor devolve nova lista (após adicionar/guardar/
+  // remover + router.refresh). Sem isto, os itens novos não apareciam.
+  useEffect(() => {
+    setRows(custos);
+  }, [custos]);
   const [novo, setNovo] = useState<{
     tipo: CustoTipo;
     descricao: string;
