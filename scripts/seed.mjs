@@ -66,6 +66,9 @@ const ALGARVE = [
 // Inativos — entram com ativo=false. (Historicamente do Porto.)
 const INATIVOS = ["TRIND1","TRIND2","TRIND3","TRIND4","TRIND5","TRIND6","TRIND7","URBAL1","URBSC4"];
 
+// Áreas comuns de prédios (várias unidades no mesmo edifício) — Porto.
+const PREDIOS = ["ACMx","BOLx","VHAFx","NADAx","RIVOLx"];
+
 const LABEL = { porto: "Porto", lisboa: "Lisboa", algarve: "Algarve" };
 
 function linhas() {
@@ -78,6 +81,7 @@ function linhas() {
   add(PORTO, "porto", true);
   add(LISBOA, "lisboa", true);
   add(ALGARVE, "algarve", true);
+  add(PREDIOS, "porto", true);
   add(INATIVOS, "porto", false);
   return out;
 }
