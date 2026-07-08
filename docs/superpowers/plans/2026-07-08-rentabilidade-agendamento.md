@@ -991,7 +991,7 @@ git commit -m "feat(incidencias): campos Agendada para e Preco ao proprietario"
 - Consumes: `PL` (Task 2); `getPLIncidencia` (Task 4); `formatEuro`.
 - Produces: `PLBreakdown({ pl, semPreco }: { pl: PL; semPreco?: boolean })` React component.
 
-- [ ] **Step 1: Write `src/components/PLBreakdown.tsx`**
+- [x] **Step 1: Write `src/components/PLBreakdown.tsx`**
 
 ```tsx
 import { formatEuro } from "@/lib/format";
@@ -1034,7 +1034,7 @@ function Linha({ rotulo, valor }: { rotulo: string; valor: number }) {
 }
 ```
 
-- [ ] **Step 2: Render the card in the incidência detail page**
+- [x] **Step 2: Render the card in the incidência detail page**
 
 In `src/app/(app)/incidencias/[id]/page.tsx`:
 
@@ -1065,16 +1065,16 @@ Insert the card in the layout, right before the `<RegistoEmpresa ... />` element
         ) : null}
 ```
 
-- [ ] **Step 3: Verify it compiles**
+- [x] **Step 3: Verify it compiles**
 
 Run: `npm run typecheck`
 Expected: PASS.
 
-- [ ] **Step 4: Manual verification**
+- [ ] **Step 4: Manual verification** — não corrido (regra: sem `next dev`). Coberto por typecheck.
 
 `npm run dev` → open an incidência with técnico + tempo + preço → the "Rentabilidade" card shows receita − custos = resultado (green/red). With no preço it shows "Preço por definir".
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/components/PLBreakdown.tsx "src/app/(app)/incidencias/[id]/page.tsx"

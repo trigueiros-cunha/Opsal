@@ -14,6 +14,8 @@ import { ApagarIncidencia } from "./ApagarIncidencia";
 import { IncidenciaEditor } from "./IncidenciaEditor";
 import { RegistoEmpresa } from "./RegistoEmpresa";
 import { construirRegisto } from "@/lib/registo";
+import { PLBreakdown } from "@/components/PLBreakdown";
+import { getPLIncidencia } from "@/lib/data/rentabilidade";
 import {
   adicionarCusto,
   atualizarCusto,
@@ -32,11 +34,12 @@ export default async function IncidenciaDetalhe({
   const inc = await getIncidencia(params.id);
   if (!inc) notFound();
 
-  const [custos, fotos, apartamentos, tecnicos] = await Promise.all([
+  const [custos, fotos, apartamentos, tecnicos, pl] = await Promise.all([
     listCustos(inc.id),
     listFotosIncidencia(inc.id),
     listApartamentosSelect(),
     listTecnicos(),
+    getPLIncidencia(inc.id),
   ]);
 
   const registo = construirRegisto({
@@ -134,6 +137,10 @@ export default async function IncidenciaDetalhe({
           onUpload={uploadFoto}
           onRemove={removerFoto}
         />
+
+        {pl ? (
+          <PLBreakdown pl={pl} semPreco={inc.preco_proprietario == null} />
+        ) : null}
 
         {/* 5. Registo para a empresa (o resultado) */}
         <RegistoEmpresa registo={registo} />
