@@ -26,6 +26,8 @@ export function IncidenciaEditor({
   tempoMinutos,
   deslocacaoModo,
   deslocacaoValor,
+  agendadaEm,
+  precoProprietario,
   notasResolucao,
   apartamentos,
   tecnicos,
@@ -40,6 +42,8 @@ export function IncidenciaEditor({
   tempoMinutos: number | null;
   deslocacaoModo: string | null;
   deslocacaoValor: number | null;
+  agendadaEm: string | null;
+  precoProprietario: number | null;
   notasResolucao: string | null;
   apartamentos: { id: string; codigo: string }[];
   tecnicos: { id: string; nome: string; custo_hora: number }[];
@@ -58,6 +62,8 @@ export function IncidenciaEditor({
     horas: String(Math.floor((tempoMinutos ?? 0) / 60) || ""),
     minutos: String((tempoMinutos ?? 0) % 60 || ""),
     valor: deslocacaoValor != null ? String(deslocacaoValor) : "",
+    agendada: agendadaEm ?? "",
+    preco: precoProprietario != null ? String(precoProprietario) : "",
   });
 
   const modoInicial = deslocacaoModo
@@ -90,6 +96,8 @@ export function IncidenciaEditor({
     fd.set("minutos", f.minutos || "0");
     fd.set("deslocacao_modo", modo === "outro" ? modoOutro : modo);
     fd.set("deslocacao_valor", f.valor);
+    fd.set("agendada_em", f.agendada);
+    fd.set("preco_proprietario", f.preco);
     startTransition(async () => {
       await atualizarIncidencia(fd);
       router.refresh();
@@ -138,6 +146,15 @@ export function IncidenciaEditor({
                 </option>
               ))}
             </select>
+          </div>
+          <div>
+            <label className="label">Agendada para</label>
+            <input
+              type="date"
+              className="input"
+              value={f.agendada}
+              onChange={(e) => set({ agendada: e.target.value })}
+            />
           </div>
           <div>
             <label className="label">Prioridade</label>
@@ -253,6 +270,17 @@ export function IncidenciaEditor({
               className="input"
               value={f.valor}
               onChange={(e) => set({ valor: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="label">Preço ao proprietário (€)</label>
+            <input
+              type="number"
+              step="0.01"
+              className="input"
+              value={f.preco}
+              onChange={(e) => set({ preco: e.target.value })}
+              placeholder="receita cobrada"
             />
           </div>
         </div>

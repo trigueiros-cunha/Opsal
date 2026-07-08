@@ -881,7 +881,7 @@ git commit -m "feat(incidencias): gravar preco_proprietario e agendada_em"
 - Consumes: `atualizarIncidencia` (Task 6).
 - Produces: editor persists `agendada_em` + `preco_proprietario` via the existing "Guardar".
 
-- [ ] **Step 1: Add the two props to the component signature**
+- [x] **Step 1: Add the two props to the component signature**
 
 In `IncidenciaEditor.tsx`, add to the props destructuring and the props type:
 
@@ -899,7 +899,7 @@ In `IncidenciaEditor.tsx`, add to the props destructuring and the props type:
   notasResolucao: string | null;
 ```
 
-- [ ] **Step 2: Seed the two fields into local state**
+- [x] **Step 2: Seed the two fields into local state**
 
 Extend the `useState` initial object `f`:
 
@@ -909,7 +909,7 @@ Extend the `useState` initial object `f`:
     preco: precoProprietario != null ? String(precoProprietario) : "",
 ```
 
-- [ ] **Step 3: Add "Agendada para" next to Técnico (planning block)**
+- [x] **Step 3: Add "Agendada para" next to Técnico (planning block)**
 
 In the "O problema" grid, after the Técnico `<div>` (the `select` with "Por atribuir"), add a new grid cell:
 
@@ -925,7 +925,7 @@ In the "O problema" grid, after the Técnico `<div>` (the `select` with "Por atr
           </div>
 ```
 
-- [ ] **Step 4: Add "Preço ao proprietário" next to Valor deslocação**
+- [x] **Step 4: Add "Preço ao proprietário" next to Valor deslocação**
 
 In the deslocação grid (the `grid-cols-2` block with "Valor deslocação (€)"), add a third field below it (or extend the grid). Add after the "Valor deslocação (€)" `<div>`:
 
@@ -943,7 +943,7 @@ In the deslocação grid (the `grid-cols-2` block with "Valor deslocação (€)
           </div>
 ```
 
-- [ ] **Step 5: Send both in the FormData in `guardar()`**
+- [x] **Step 5: Send both in the FormData in `guardar()`**
 
 After `fd.set("deslocacao_valor", f.valor);` add:
 
@@ -952,7 +952,7 @@ After `fd.set("deslocacao_valor", f.valor);` add:
     fd.set("preco_proprietario", f.preco);
 ```
 
-- [ ] **Step 6: Pass the props from the detail page**
+- [x] **Step 6: Pass the props from the detail page**
 
 In `src/app/(app)/incidencias/[id]/page.tsx`, in the `<IncidenciaEditor ... />` element, add:
 
@@ -963,16 +963,16 @@ In `src/app/(app)/incidencias/[id]/page.tsx`, in the `<IncidenciaEditor ... />` 
           notasResolucao={inc.notas_resolucao}
 ```
 
-- [ ] **Step 7: Verify it compiles**
+- [x] **Step 7: Verify it compiles**
 
 Run: `npm run typecheck`
 Expected: PASS.
 
-- [ ] **Step 8: Manual verification**
+- [ ] **Step 8: Manual verification** — não corrido (regra: sem `next dev`). Coberto por typecheck.
 
 `npm run dev` → open an incidência → set "Agendada para" to another day and a "Preço ao proprietário" → Guardar → confirm the values persist on reload and the incidência moves day on `/agenda`.
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 git add "src/app/(app)/incidencias/[id]/IncidenciaEditor.tsx" "src/app/(app)/incidencias/[id]/page.tsx"

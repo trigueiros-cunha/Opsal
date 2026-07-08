@@ -109,6 +109,8 @@ export default async function IncidenciaDetalhe({
           tempoMinutos={inc.tempo_minutos}
           deslocacaoModo={inc.deslocacao_modo}
           deslocacaoValor={inc.deslocacao_valor}
+          agendadaEm={inc.agendada_em}
+          precoProprietario={inc.preco_proprietario}
           notasResolucao={inc.notas_resolucao}
           apartamentos={apartamentos}
           tecnicos={tecnicos}
