@@ -89,6 +89,9 @@ export async function atualizarIncidencia(formData: FormData) {
   const id = str(formData.get("id"));
   if (!id) throw new Error("id em falta");
 
+  const tempo = Math.round(num(formData.get("horas")) * 60 + num(formData.get("minutos")));
+  const valorRaw = str(formData.get("deslocacao_valor"));
+
   const patch: Record<string, unknown> = {
     titulo: str(formData.get("titulo")),
     descricao: strOuNull(formData.get("descricao")),
@@ -96,38 +99,15 @@ export async function atualizarIncidencia(formData: FormData) {
     origem: str(formData.get("origem")) as Origem,
     tecnico_id: strOuNull(formData.get("tecnico_id")),
     apartamento_id: str(formData.get("apartamento_id")),
+    notas_resolucao: strOuNull(formData.get("notas_resolucao")),
+    tempo_minutos: tempo > 0 ? tempo : null,
+    deslocacao_modo: strOuNull(formData.get("deslocacao_modo")),
+    deslocacao_valor: valorRaw === "" ? null : num(formData.get("deslocacao_valor")),
   };
 
   const { error } = await supabaseAdmin()
     .from("incidencias")
     .update(patch)
-    .eq("id", id);
-  if (error) throw error;
-
-  revalidatePath(`/incidencias/${id}`);
-  revalidatePath("/incidencias");
-}
-
-// ── Trabalho & deslocação ─────────────────────────────────────────────────────
-export async function guardarTrabalho(formData: FormData) {
-  await exigirSessao();
-  const id = str(formData.get("id"));
-  if (!id) throw new Error("id em falta");
-
-  const horas = num(formData.get("horas"));
-  const minutos = num(formData.get("minutos"));
-  const tempo = Math.round(horas * 60 + minutos);
-
-  const valorRaw = str(formData.get("deslocacao_valor"));
-
-  const { error } = await supabaseAdmin()
-    .from("incidencias")
-    .update({
-      tempo_minutos: tempo > 0 ? tempo : null,
-      deslocacao_modo: strOuNull(formData.get("deslocacao_modo")),
-      deslocacao_valor: valorRaw === "" ? null : num(formData.get("deslocacao_valor")),
-      notas_resolucao: strOuNull(formData.get("notas_resolucao")),
-    })
     .eq("id", id);
   if (error) throw error;
 
