@@ -746,7 +746,7 @@ git commit -m "feat(data): agregacao de rentabilidade (resumoDia, PL, nao rentav
 - Consumes: `agendada_em` column (Task 1).
 - Produces: incidência events placed at `COALESCE(agendada_em, aberta_em::date)`; unscheduled stay on creation day.
 
-- [ ] **Step 1: Replace the incidências block in `src/lib/data/agenda.ts`**
+- [x] **Step 1: Replace the incidências block in `src/lib/data/agenda.ts`**
 
 Replace the current incidências query + loop (lines ~20–47, the block starting at the `// ── Incidências:` comment and ending before the `// ── Recorrentes:` comment) with:
 
@@ -798,16 +798,16 @@ Replace the current incidências query + loop (lines ~20–47, the block startin
 
 (`inicioStr`, `fimStr`, `inicio`, `fimExclusivo`, `toISODate`, and `eventos` are already declared earlier in the function.)
 
-- [ ] **Step 2: Verify it compiles**
+- [x] **Step 2: Verify it compiles**
 
 Run: `npm run typecheck`
 Expected: PASS.
 
-- [ ] **Step 3: Manual verification**
+- [ ] **Step 3: Manual verification** — não corrido (regra: sem `next dev`). Coberto por typecheck; validar no browser após deploy.
 
 Start dev server (`npm run dev`), open `/agenda`. An unscheduled active incidência still shows on its creation day. After Task 7, setting `agendada_em` moves it to the scheduled day.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/lib/data/agenda.ts

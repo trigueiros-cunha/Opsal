@@ -17,34 +17,49 @@ export async function eventosDaSemana(
   const db = supabaseAdmin();
   const eventos: EventoAgenda[] = [];
 
-  // ── Incidências: ativas (não fechadas), data = aberta_em na janela ─────────
-  const { data: incs, error: incErr } = await db
-    .from("incidencias")
-    .select(
-      `id, titulo, tecnico_id, aberta_em,
-       apartamento:apartamentos ( codigo )`,
-    )
-    .not("estado", "in", "(resolvida,fechada)")
-    .gte("aberta_em", inicio.toISOString())
-    .lt("aberta_em", fimExclusivo.toISOString());
-  if (incErr) throw incErr;
-  for (const i of incs ?? []) {
-    const row = i as unknown as {
-      id: string;
-      titulo: string;
-      tecnico_id: string | null;
-      aberta_em: string;
-      apartamento: { codigo: string } | null;
-    };
+  // ── Incidências ativas: agendadas na janela + não-agendadas criadas na janela.
+  //    Data efetiva = COALESCE(agendada_em, aberta_em::date). ──────────────────
+  const pushInc = (row: {
+    id: string;
+    titulo: string;
+    tecnico_id: string | null;
+    aberta_em: string;
+    agendada_em: string | null;
+    apartamento: { codigo: string } | null;
+  }) => {
     eventos.push({
       id: row.id,
       kind: "inc",
       apartamento_codigo: row.apartamento?.codigo ?? "—",
       titulo: row.titulo,
       tecnico_id: row.tecnico_id,
-      data: toISODate(new Date(row.aberta_em)),
+      data: row.agendada_em ?? toISODate(new Date(row.aberta_em)),
     });
-  }
+  };
+
+  const selectInc = `id, titulo, tecnico_id, aberta_em, agendada_em,
+       apartamento:apartamentos ( codigo )`;
+
+  // (1) Agendadas cuja agendada_em cai na semana.
+  const { data: incAgendadas, error: incAgErr } = await db
+    .from("incidencias")
+    .select(selectInc)
+    .not("estado", "in", "(resolvida,fechada)")
+    .gte("agendada_em", inicioStr)
+    .lt("agendada_em", fimStr);
+  if (incAgErr) throw incAgErr;
+  for (const i of incAgendadas ?? []) pushInc(i as never);
+
+  // (2) Não-agendadas criadas na semana (comportamento legado).
+  const { data: incCriadas, error: incCrErr } = await db
+    .from("incidencias")
+    .select(selectInc)
+    .not("estado", "in", "(resolvida,fechada)")
+    .is("agendada_em", null)
+    .gte("aberta_em", inicio.toISOString())
+    .lt("aberta_em", fimExclusivo.toISOString());
+  if (incCrErr) throw incCrErr;
+  for (const i of incCriadas ?? []) pushInc(i as never);
 
   // ── Recorrentes: proxima_data na janela (via view) ─────────────────────────
   const { data: recs, error: recErr } = await db
