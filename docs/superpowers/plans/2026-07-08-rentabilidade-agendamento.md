@@ -1392,7 +1392,7 @@ git commit -m "feat(rentabilidade): nav + dashboard diario por tecnico + nao ren
 - Consumes: `getConfig`, `updateConfig` (Task 3).
 - Produces: `guardarConfig(formData: FormData)` server action; `/rentabilidade/config` route.
 
-- [ ] **Step 1: Write `src/app/(app)/rentabilidade/actions.ts`**
+- [x] **Step 1: Write `src/app/(app)/rentabilidade/actions.ts`**
 
 ```ts
 "use server";
@@ -1419,7 +1419,7 @@ export async function guardarConfig(formData: FormData) {
 }
 ```
 
-- [ ] **Step 2: Write `src/app/(app)/rentabilidade/config/page.tsx`**
+- [x] **Step 2: Write `src/app/(app)/rentabilidade/config/page.tsx`**
 
 ```tsx
 import Link from "next/link";
@@ -1498,16 +1498,16 @@ export default async function ConfigPage() {
 }
 ```
 
-- [ ] **Step 3: Verify it compiles**
+- [x] **Step 3: Verify it compiles**
 
 Run: `npm run typecheck`
 Expected: PASS.
 
-- [ ] **Step 4: Manual verification**
+- [ ] **Step 4: Manual verification** — não corrido (regra: sem `next dev`). Coberto por typecheck.
 
 `npm run dev` → `/rentabilidade` → "Config" → change the encargos %, Guardar → redirected to `/rentabilidade`; open a técnico card / incidência P&L and confirm the loaded cost (custo de tempo) changed accordingly.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add "src/app/(app)/rentabilidade/actions.ts" "src/app/(app)/rentabilidade/config/page.tsx"
