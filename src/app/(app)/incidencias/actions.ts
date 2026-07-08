@@ -42,6 +42,7 @@ export async function criarIncidencia(formData: FormData) {
       estado: (str(formData.get("estado")) || "aberta") as IncidenciaEstado,
       origem: (str(formData.get("origem")) || "hospede") as Origem,
       tecnico_id: strOuNull(formData.get("tecnico_id")),
+      agendada_em: strOuNull(formData.get("agendada_em")),
     })
     .select("id")
     .single();
@@ -103,6 +104,11 @@ export async function atualizarIncidencia(formData: FormData) {
     tempo_minutos: tempo > 0 ? tempo : null,
     deslocacao_modo: strOuNull(formData.get("deslocacao_modo")),
     deslocacao_valor: valorRaw === "" ? null : num(formData.get("deslocacao_valor")),
+    preco_proprietario:
+      str(formData.get("preco_proprietario")) === ""
+        ? null
+        : num(formData.get("preco_proprietario")),
+    agendada_em: strOuNull(formData.get("agendada_em")),
   };
 
   const { error } = await supabaseAdmin()
@@ -113,6 +119,7 @@ export async function atualizarIncidencia(formData: FormData) {
 
   revalidatePath(`/incidencias/${id}`);
   revalidatePath("/incidencias");
+  revalidatePath("/agenda");
 }
 
 // ── Mudar estado (com fecho de ciclo de recorrente, secção 4) ────────────────

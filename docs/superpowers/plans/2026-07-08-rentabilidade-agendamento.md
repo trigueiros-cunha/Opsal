@@ -825,7 +825,7 @@ git commit -m "feat(agenda): incidencias pela data efetiva (agendada_em ou criac
 - Consumes: the two new columns (Task 1).
 - Produces: `atualizarIncidencia` and `criarIncidencia` read `preco_proprietario` and `agendada_em` from the form.
 
-- [ ] **Step 1: Add both fields to the `atualizarIncidencia` patch**
+- [x] **Step 1: Add both fields to the `atualizarIncidencia` patch**
 
 In `atualizarIncidencia`, after the `deslocacao_valor` line inside the `patch` object, add:
 
@@ -838,7 +838,7 @@ In `atualizarIncidencia`, after the `deslocacao_valor` line inside the `patch` o
     agendada_em: strOuNull(formData.get("agendada_em")),
 ```
 
-- [ ] **Step 2: Accept `agendada_em` on create**
+- [x] **Step 2: Accept `agendada_em` on create**
 
 In `criarIncidencia`, add `agendada_em` to the `.insert({...})` object:
 
@@ -847,7 +847,7 @@ In `criarIncidencia`, add `agendada_em` to the `.insert({...})` object:
       agendada_em: strOuNull(formData.get("agendada_em")),
 ```
 
-- [ ] **Step 3: Revalidate the agenda after an update**
+- [x] **Step 3: Revalidate the agenda after an update**
 
 Still in `atualizarIncidencia`, add a revalidate for the agenda alongside the existing ones:
 
@@ -857,12 +857,12 @@ Still in `atualizarIncidencia`, add a revalidate for the agenda alongside the ex
   revalidatePath("/agenda");
 ```
 
-- [ ] **Step 4: Verify it compiles**
+- [x] **Step 4: Verify it compiles**
 
 Run: `npm run typecheck`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/app/(app)/incidencias/actions.ts
