@@ -108,6 +108,33 @@ export async function atualizarIncidencia(formData: FormData) {
   revalidatePath("/incidencias");
 }
 
+// ── Trabalho & deslocação ─────────────────────────────────────────────────────
+export async function guardarTrabalho(formData: FormData) {
+  await exigirSessao();
+  const id = str(formData.get("id"));
+  if (!id) throw new Error("id em falta");
+
+  const horas = num(formData.get("horas"));
+  const minutos = num(formData.get("minutos"));
+  const tempo = Math.round(horas * 60 + minutos);
+
+  const valorRaw = str(formData.get("deslocacao_valor"));
+
+  const { error } = await supabaseAdmin()
+    .from("incidencias")
+    .update({
+      tempo_minutos: tempo > 0 ? tempo : null,
+      deslocacao_modo: strOuNull(formData.get("deslocacao_modo")),
+      deslocacao_valor: valorRaw === "" ? null : num(formData.get("deslocacao_valor")),
+      notas_resolucao: strOuNull(formData.get("notas_resolucao")),
+    })
+    .eq("id", id);
+  if (error) throw error;
+
+  revalidatePath(`/incidencias/${id}`);
+  revalidatePath("/incidencias");
+}
+
 // ── Mudar estado (com fecho de ciclo de recorrente, secção 4) ────────────────
 export async function mudarEstado(formData: FormData) {
   await exigirSessao();

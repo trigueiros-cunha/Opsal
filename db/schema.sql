@@ -110,6 +110,11 @@ alter table incidencias add column if not exists import_ref text;
 create unique index if not exists incidencias_import_ref_key
   on incidencias (import_ref);
 
+-- trabalho e deslocação (fecho de incidência / registo para a empresa)
+alter table incidencias add column if not exists tempo_minutos int;
+alter table incidencias add column if not exists deslocacao_modo text;
+alter table incidencias add column if not exists deslocacao_valor numeric(10,2);
+
 -- ── incidencia_custos ────────────────────────────────────────────────────────
 create table if not exists incidencia_custos (
   id             uuid primary key default gen_random_uuid(),

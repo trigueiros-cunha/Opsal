@@ -11,7 +11,7 @@ import type {
 const SELECT_COM_RELACOES = `
   *,
   apartamento:apartamentos ( id, codigo, regiao ),
-  tecnico:tecnicos ( id, nome, iniciais )
+  tecnico:tecnicos ( id, nome, iniciais, custo_hora )
 `;
 
 export interface FiltrosIncidencias {

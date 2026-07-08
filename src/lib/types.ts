@@ -67,6 +67,9 @@ export interface Incidencia {
   recorrente_id: string | null;
   aberta_em: string;
   resolvida_em: string | null;
+  tempo_minutos: number | null;
+  deslocacao_modo: string | null;
+  deslocacao_valor: number | null;
   criado_em: string;
   atualizado_em: string;
 }
@@ -147,7 +150,7 @@ export interface Foto {
 
 export interface IncidenciaComRelacoes extends Incidencia {
   apartamento: Pick<Apartamento, "id" | "codigo" | "regiao"> | null;
-  tecnico: Pick<Tecnico, "id" | "nome" | "iniciais"> | null;
+  tecnico: Pick<Tecnico, "id" | "nome" | "iniciais" | "custo_hora"> | null;
 }
 
 export interface ProjetoComRelacoes extends Projeto {

@@ -12,6 +12,9 @@ import { ORIGENS, ORIGEM_LABEL, PRIORIDADES, PRIORIDADE_LABEL } from "@/lib/cons
 import { formatDataHora } from "@/lib/format";
 import { EstadoControls } from "./EstadoControls";
 import { ApagarIncidencia } from "./ApagarIncidencia";
+import { TrabalhoEditor } from "./TrabalhoEditor";
+import { RegistoEmpresa } from "./RegistoEmpresa";
+import { construirRegisto } from "@/lib/registo";
 import {
   adicionarCusto,
   atualizarCusto,
@@ -37,6 +40,25 @@ export default async function IncidenciaDetalhe({
     listApartamentosSelect(),
     listTecnicos(),
   ]);
+
+  const registo = construirRegisto({
+    notasResolucao: inc.notas_resolucao,
+    tempoMinutos: inc.tempo_minutos,
+    deslocacaoModo: inc.deslocacao_modo,
+    deslocacaoValor: inc.deslocacao_valor,
+    custos: custos.map((c) => ({
+      descricao: c.descricao,
+      quantidade: c.quantidade,
+      valor_unitario: c.valor_unitario,
+    })),
+    tecnico: inc.tecnico
+      ? {
+          nome: inc.tecnico.nome,
+          iniciais: inc.tecnico.iniciais,
+          custo_hora: inc.tecnico.custo_hora,
+        }
+      : null,
+  });
 
   return (
     <>
@@ -169,6 +191,17 @@ export default async function IncidenciaDetalhe({
             bloqueadaAguarda={inc.bloqueada_aguarda}
             temRecorrente={Boolean(inc.recorrente_id)}
           />
+
+          <TrabalhoEditor
+            id={inc.id}
+            tempoMinutos={inc.tempo_minutos}
+            deslocacaoModo={inc.deslocacao_modo}
+            deslocacaoValor={inc.deslocacao_valor}
+            notasResolucao={inc.notas_resolucao}
+            custoHora={inc.tecnico?.custo_hora ?? null}
+          />
+
+          <RegistoEmpresa registo={registo} />
 
           {inc.estado === "bloqueada" && inc.bloqueada_aguarda ? (
             <div className="card border-orange-200 bg-orange-50 p-4">
