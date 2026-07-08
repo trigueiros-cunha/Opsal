@@ -1612,7 +1612,7 @@ git commit -m "feat(agenda): agendar na criacao + marcador de agendada"
 
 ## Final verification
 
-- [ ] Run the full test suite: `npm test` → all pass (existing + new `rentabilidade` describe).
-- [ ] Run `npm run typecheck` → clean.
-- [ ] Run `npm run lint` → clean (or pre-existing warnings only).
-- [ ] Manual smoke: resolve an incidência with técnico+tempo+preço today → it appears in `/rentabilidade` under that técnico with a positive/negative result; give it a materials cost that exceeds the price → it appears in "Não rentáveis". Schedule another incidência → it lands on the right agenda day.
+- [x] Run the full test suite: `npm test` → **36 passed (7 files)**, inclui o novo `rentabilidade` describe.
+- [x] Run `npm run typecheck` → **clean**.
+- [ ] Run `npm run lint` → **N/A**: o projeto não tem config ESLint (`next lint` pede setup interativo). Pré-existente, não afetado por estas mudanças.
+- [ ] Manual smoke → **não corrido** (regra: sem `next dev`). Requer a SQL do Passo 1.3 aplicada no Supabase + servidor. Lógica coberta por typecheck + unit tests.
