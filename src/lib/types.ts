@@ -177,6 +177,7 @@ export interface EventoAgenda {
   titulo: string;
   tecnico_id: string | null;
   data: string; // YYYY-MM-DD
+  agendado?: boolean;
 }
 
 // Resposta da extração WhatsApp (secção 5)

@@ -35,6 +35,7 @@ export function NovaIncidenciaForm({
   const [prioridade, setPrioridade] = useState<Prioridade>("media");
   const [origem, setOrigem] = useState<Origem>("hospede");
   const [tecnicoId, setTecnicoId] = useState("");
+  const [agendada, setAgendada] = useState("");
 
   async function extrair() {
     if (!texto.trim()) return;
@@ -212,6 +213,20 @@ export function NovaIncidenciaForm({
               </option>
             ))}
           </select>
+        </div>
+
+        <div>
+          <label className="label" htmlFor="agendada_em">
+            Agendar para (opcional)
+          </label>
+          <input
+            id="agendada_em"
+            name="agendada_em"
+            type="date"
+            className="input"
+            value={agendada}
+            onChange={(e) => setAgendada(e.target.value)}
+          />
         </div>
 
         <div className="flex justify-end gap-2 pt-2">

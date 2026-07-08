@@ -1525,7 +1525,7 @@ git commit -m "feat(rentabilidade): pagina de configuracao (encargos, horas/dia)
 **Interfaces:**
 - Consumes: `criarIncidencia` accepting `agendada_em` (Task 6); `EventoAgenda` (already carries `data`).
 
-- [ ] **Step 1: Add an "Agendar para" field to the nova-incidência form**
+- [x] **Step 1: Add an "Agendar para" field to the nova-incidência form**
 
 In `NovaIncidenciaForm.tsx`, add a controlled state near the others:
 
@@ -1553,7 +1553,7 @@ Add a field inside the `<form>` after the Técnico `<div>`:
 
 (The `<form action={criarIncidencia}>` submits `agendada_em` automatically; Task 6 already reads it.)
 
-- [ ] **Step 2: Mark scheduled incidências on the agenda chip**
+- [x] **Step 2: Mark scheduled incidências on the agenda chip**
 
 This step needs to know whether an event was scheduled. Minimal approach: the agenda already places scheduled incidências on `agendada_em`. To visually flag, extend `EventoAgenda` with an optional `agendado?: boolean`.
 
@@ -1592,16 +1592,16 @@ In `AgendaView.tsx`, in `EventoChip`, prefix scheduled incidências with a marke
       </span>
 ```
 
-- [ ] **Step 3: Verify it compiles**
+- [x] **Step 3: Verify it compiles**
 
 Run: `npm run typecheck`
 Expected: PASS.
 
-- [ ] **Step 4: Manual verification**
+- [ ] **Step 4: Manual verification** — não corrido (regra: sem `next dev`). Coberto por typecheck.
 
 `npm run dev` → create a new incidência with "Agendar para" set → it appears on the chosen day in `/agenda` with a `✎` marker; an unscheduled one has no marker on its creation day.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add "src/app/(app)/incidencias/nova/NovaIncidenciaForm.tsx" "src/app/(app)/agenda/AgendaView.tsx" src/lib/types.ts src/lib/data/agenda.ts

@@ -235,7 +235,10 @@ function EventoChip({ evento }: { evento: EventoAgenda }) {
       title={`${KIND_LABEL[evento.kind]} · ${evento.apartamento_codigo}`}
     >
       <span className="font-semibold">{evento.apartamento_codigo}</span>{" "}
-      <span className="opacity-80">{evento.titulo}</span>
+      <span className="opacity-80">
+        {evento.agendado ? "✎ " : ""}
+        {evento.titulo}
+      </span>
     </Link>
   );
 }

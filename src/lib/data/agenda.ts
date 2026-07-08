@@ -19,14 +19,17 @@ export async function eventosDaSemana(
 
   // ── Incidências ativas: agendadas na janela + não-agendadas criadas na janela.
   //    Data efetiva = COALESCE(agendada_em, aberta_em::date). ──────────────────
-  const pushInc = (row: {
-    id: string;
-    titulo: string;
-    tecnico_id: string | null;
-    aberta_em: string;
-    agendada_em: string | null;
-    apartamento: { codigo: string } | null;
-  }) => {
+  const pushInc = (
+    row: {
+      id: string;
+      titulo: string;
+      tecnico_id: string | null;
+      aberta_em: string;
+      agendada_em: string | null;
+      apartamento: { codigo: string } | null;
+    },
+    agendado: boolean,
+  ) => {
     eventos.push({
       id: row.id,
       kind: "inc",
@@ -34,6 +37,7 @@ export async function eventosDaSemana(
       titulo: row.titulo,
       tecnico_id: row.tecnico_id,
       data: row.agendada_em ?? toISODate(new Date(row.aberta_em)),
+      agendado,
     });
   };
 
@@ -48,7 +52,7 @@ export async function eventosDaSemana(
     .gte("agendada_em", inicioStr)
     .lt("agendada_em", fimStr);
   if (incAgErr) throw incAgErr;
-  for (const i of incAgendadas ?? []) pushInc(i as never);
+  for (const i of incAgendadas ?? []) pushInc(i as never, true);
 
   // (2) Não-agendadas criadas na semana (comportamento legado).
   const { data: incCriadas, error: incCrErr } = await db
@@ -59,7 +63,7 @@ export async function eventosDaSemana(
     .gte("aberta_em", inicio.toISOString())
     .lt("aberta_em", fimExclusivo.toISOString());
   if (incCrErr) throw incCrErr;
-  for (const i of incCriadas ?? []) pushInc(i as never);
+  for (const i of incCriadas ?? []) pushInc(i as never, false);
 
   // ── Recorrentes: proxima_data na janela (via view) ─────────────────────────
   const { data: recs, error: recErr } = await db
