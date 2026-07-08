@@ -391,7 +391,7 @@ git commit -m "feat(custo): camada de calculo de rentabilidade (P&L) + testes"
 - Consumes: `Config` type (Task 1).
 - Produces: `getConfig(): Promise<Config>` (defaults 23.75/8 if row missing); `updateConfig(patch: { taxa_encargos_pct?: number; horas_dia_padrao?: number }): Promise<void>`.
 
-- [ ] **Step 1: Write `src/lib/data/config.ts`**
+- [x] **Step 1: Write `src/lib/data/config.ts`**
 
 ```ts
 import "server-only";
@@ -427,12 +427,12 @@ export async function updateConfig(patch: {
 }
 ```
 
-- [ ] **Step 2: Verify it compiles**
+- [x] **Step 2: Verify it compiles**
 
 Run: `npm run typecheck`
 Expected: PASS.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add src/lib/data/config.ts
@@ -862,7 +862,7 @@ Still in `atualizarIncidencia`, add a revalidate for the agenda alongside the ex
 Run: `npm run typecheck`
 Expected: PASS.
 
-- [x] **Step 5: Commit**
+- [ ] **Step 5: Commit**
 
 ```bash
 git add src/app/(app)/incidencias/actions.ts
@@ -1074,7 +1074,7 @@ Expected: PASS.
 
 `npm run dev` → open an incidência with técnico + tempo + preço → the "Rentabilidade" card shows receita − custos = resultado (green/red). With no preço it shows "Preço por definir".
 
-- [x] **Step 5: Commit**
+- [ ] **Step 5: Commit**
 
 ```bash
 git add src/components/PLBreakdown.tsx "src/app/(app)/incidencias/[id]/page.tsx"
@@ -1507,7 +1507,7 @@ Expected: PASS.
 
 `npm run dev` → `/rentabilidade` → "Config" → change the encargos %, Guardar → redirected to `/rentabilidade`; open a técnico card / incidência P&L and confirm the loaded cost (custo de tempo) changed accordingly.
 
-- [x] **Step 5: Commit**
+- [ ] **Step 5: Commit**
 
 ```bash
 git add "src/app/(app)/rentabilidade/actions.ts" "src/app/(app)/rentabilidade/config/page.tsx"
@@ -1601,7 +1601,7 @@ Expected: PASS.
 
 `npm run dev` → create a new incidência with "Agendar para" set → it appears on the chosen day in `/agenda` with a `✎` marker; an unscheduled one has no marker on its creation day.
 
-- [x] **Step 5: Commit**
+- [ ] **Step 5: Commit**
 
 ```bash
 git add "src/app/(app)/incidencias/nova/NovaIncidenciaForm.tsx" "src/app/(app)/agenda/AgendaView.tsx" src/lib/types.ts src/lib/data/agenda.ts
