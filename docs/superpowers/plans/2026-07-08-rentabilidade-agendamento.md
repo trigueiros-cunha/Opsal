@@ -457,7 +457,7 @@ git commit -m "feat(data): getConfig/updateConfig"
   - `interface LinhaNaoRentavel { kind: "inc" | "proj"; id: string; titulo: string; apartamento_codigo: string; rentabilidade: number }`
   - `listNaoRentaveis(): Promise<LinhaNaoRentavel[]>`
 
-- [ ] **Step 1: Write `src/lib/data/rentabilidade.ts`**
+- [x] **Step 1: Write `src/lib/data/rentabilidade.ts`**
 
 ```ts
 import "server-only";
@@ -723,12 +723,12 @@ export async function listNaoRentaveis(): Promise<LinhaNaoRentavel[]> {
 }
 ```
 
-- [ ] **Step 2: Verify it compiles**
+- [x] **Step 2: Verify it compiles**
 
 Run: `npm run typecheck`
 Expected: PASS.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add src/lib/data/rentabilidade.ts
