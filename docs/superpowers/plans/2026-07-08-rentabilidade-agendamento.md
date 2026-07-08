@@ -1091,7 +1091,7 @@ git commit -m "feat(incidencias): cartao de rentabilidade no detalhe"
 **Interfaces:**
 - Consumes: `PLBreakdown` (Task 8); `getPLProjeto` (Task 4).
 
-- [ ] **Step 1: Add imports**
+- [x] **Step 1: Add imports**
 
 In `src/app/(app)/projetos/[id]/page.tsx`:
 
@@ -1100,7 +1100,7 @@ import { PLBreakdown } from "@/components/PLBreakdown";
 import { getPLProjeto } from "@/lib/data/rentabilidade";
 ```
 
-- [ ] **Step 2: Fetch the P&L**
+- [x] **Step 2: Fetch the P&L**
 
 Add `getPLProjeto(params.id)` to the existing `Promise.all` and destructure it:
 
@@ -1116,7 +1116,7 @@ Add `getPLProjeto(params.id)` to the existing `Promise.all` and destructure it:
     ]);
 ```
 
-- [ ] **Step 3: Render the card**
+- [x] **Step 3: Render the card**
 
 In the right-hand column (`<div className="space-y-6">` that holds `FaseControls` + Orçamento), add right after `<FaseControls ... />`:
 
@@ -1124,16 +1124,16 @@ In the right-hand column (`<div className="space-y-6">` that holds `FaseControls
           {pl ? <PLBreakdown pl={pl} semPreco={proj.orcamento_valor == null} /> : null}
 ```
 
-- [ ] **Step 4: Verify it compiles**
+- [x] **Step 4: Verify it compiles**
 
 Run: `npm run typecheck`
 Expected: PASS.
 
-- [ ] **Step 5: Manual verification**
+- [ ] **Step 5: Manual verification** — não corrido (regra: sem `next dev`). Coberto por typecheck.
 
 `npm run dev` → open a projeto with an `orcamento_valor` and some custos → "Rentabilidade" card shows orçamento − custos = resultado.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add "src/app/(app)/projetos/[id]/page.tsx"

@@ -11,6 +11,8 @@ import { listTecnicos } from "@/lib/data/tecnicos";
 import { formatData } from "@/lib/format";
 import { FaseControls } from "./FaseControls";
 import { ProjetoForm } from "../ProjetoForm";
+import { PLBreakdown } from "@/components/PLBreakdown";
+import { getPLProjeto } from "@/lib/data/rentabilidade";
 import {
   adicionarCustoProjeto,
   atualizarCustoProjeto,
@@ -32,13 +34,14 @@ export default async function ProjetoDetalhe({
   const proj = await getProjeto(params.id);
   if (!proj) notFound();
 
-  const [custos, fotos, apartamentos, tecnicos, orcamentoUrl] =
+  const [custos, fotos, apartamentos, tecnicos, orcamentoUrl, pl] =
     await Promise.all([
       listCustosProjeto(proj.id),
       listFotosProjeto(proj.id),
       listApartamentosSelect(),
       listTecnicos(true),
       signedUrl(proj.orcamento_ficheiro),
+      getPLProjeto(proj.id),
     ]);
 
   return (
@@ -83,6 +86,8 @@ export default async function ProjetoDetalhe({
 
         <div className="space-y-6">
           <FaseControls id={proj.id} faseAtual={proj.fase} />
+
+          {pl ? <PLBreakdown pl={pl} semPreco={proj.orcamento_valor == null} /> : null}
 
           {/* Orçamento */}
           <div className="card p-4">
