@@ -149,7 +149,7 @@ git commit -m "feat(model): config table + preco_proprietario/agendada_em em inc
   - `plProjeto({ custos, orcamentoValor }): PL`
   - `resumoTecnicoDia(itens: { pl: PL; tempoMinutos: number | null }[], cfg: { horasDiaPadrao: number; custoHoraCarregado: number }): ResumoDia`
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Append to `src/lib/custo.test.ts` (add the new symbols to the existing import line, then a new `describe`):
 
@@ -256,12 +256,12 @@ describe("rentabilidade", () => {
 });
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `npx vitest run src/lib/custo.test.ts`
 Expected: FAIL — `custoHoraCarregado is not a function` (and the other new symbols undefined).
 
-- [ ] **Step 3: Implement the functions in `src/lib/custo.ts`**
+- [x] **Step 3: Implement the functions in `src/lib/custo.ts`**
 
 Append to `src/lib/custo.ts` (after the existing exports):
 
@@ -368,12 +368,12 @@ export function resumoTecnicoDia(
 }
 ```
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [x] **Step 4: Run tests to verify they pass**
 
 Run: `npx vitest run src/lib/custo.test.ts`
 Expected: PASS (existing `custo` describe + new `rentabilidade` describe).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/lib/custo.ts src/lib/custo.test.ts
@@ -862,7 +862,7 @@ Still in `atualizarIncidencia`, add a revalidate for the agenda alongside the ex
 Run: `npm run typecheck`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/app/(app)/incidencias/actions.ts
@@ -1074,7 +1074,7 @@ Expected: PASS.
 
 `npm run dev` → open an incidência with técnico + tempo + preço → the "Rentabilidade" card shows receita − custos = resultado (green/red). With no preço it shows "Preço por definir".
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/components/PLBreakdown.tsx "src/app/(app)/incidencias/[id]/page.tsx"
@@ -1507,7 +1507,7 @@ Expected: PASS.
 
 `npm run dev` → `/rentabilidade` → "Config" → change the encargos %, Guardar → redirected to `/rentabilidade`; open a técnico card / incidência P&L and confirm the loaded cost (custo de tempo) changed accordingly.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add "src/app/(app)/rentabilidade/actions.ts" "src/app/(app)/rentabilidade/config/page.tsx"
@@ -1601,7 +1601,7 @@ Expected: PASS.
 
 `npm run dev` → create a new incidência with "Agendar para" set → it appears on the chosen day in `/agenda` with a `✎` marker; an unscheduled one has no marker on its creation day.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add "src/app/(app)/incidencias/nova/NovaIncidenciaForm.tsx" "src/app/(app)/agenda/AgendaView.tsx" src/lib/types.ts src/lib/data/agenda.ts
