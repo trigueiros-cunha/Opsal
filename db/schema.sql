@@ -64,6 +64,17 @@ create table if not exists tecnicos (
   criado_em      timestamptz not null default now()
 );
 
+-- ── config (linha única — encargos + break-even do Workometer) ───────────────
+create table if not exists config (
+  id                int primary key default 1,
+  taxa_encargos_pct numeric(5,2) not null default 23.75,
+  horas_dia_padrao  numeric(4,2) not null default 8.00,
+  moeda             text not null default 'EUR',
+  atualizado_em     timestamptz not null default now(),
+  check (id = 1)
+);
+insert into config (id) values (1) on conflict (id) do nothing;
+
 -- ── recorrentes (definida antes de incidencias por FK cruzada) ───────────────
 create table if not exists recorrentes (
   id                  uuid primary key default gen_random_uuid(),
@@ -114,6 +125,10 @@ create unique index if not exists incidencias_import_ref_key
 alter table incidencias add column if not exists tempo_minutos int;
 alter table incidencias add column if not exists deslocacao_modo text;
 alter table incidencias add column if not exists deslocacao_valor numeric(10,2);
+
+-- rentabilidade + agendamento (Workometer)
+alter table incidencias add column if not exists preco_proprietario numeric(10,2);
+alter table incidencias add column if not exists agendada_em date;
 
 -- ── incidencia_custos ────────────────────────────────────────────────────────
 create table if not exists incidencia_custos (

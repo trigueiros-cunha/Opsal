@@ -53,6 +53,14 @@ export interface Tecnico {
   criado_em: string;
 }
 
+export interface Config {
+  id: number;
+  taxa_encargos_pct: number;
+  horas_dia_padrao: number;
+  moeda: string;
+  atualizado_em: string;
+}
+
 export interface Incidencia {
   id: string;
   apartamento_id: string;
@@ -70,6 +78,8 @@ export interface Incidencia {
   tempo_minutos: number | null;
   deslocacao_modo: string | null;
   deslocacao_valor: number | null;
+  preco_proprietario: number | null;
+  agendada_em: string | null; // date, YYYY-MM-DD
   criado_em: string;
   atualizado_em: string;
 }
