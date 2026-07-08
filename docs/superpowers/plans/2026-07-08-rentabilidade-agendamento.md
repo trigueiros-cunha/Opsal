@@ -1154,7 +1154,7 @@ git commit -m "feat(projetos): cartao de rentabilidade no detalhe"
 - Consumes: `resumoDia`, `listNaoRentaveis`, `ResumoTecnico`, `LinhaNaoRentavel` (Task 4); `formatEuro`, `toISODate`.
 - Produces: `/rentabilidade` route with date selector, per-técnico cards, unprofitable panel.
 
-- [ ] **Step 1: Add the nav entry in `src/components/Sidebar.tsx`**
+- [x] **Step 1: Add the nav entry in `src/components/Sidebar.tsx`**
 
 In the `LINKS` array, add after the `projetos` entry:
 
@@ -1162,7 +1162,7 @@ In the `LINKS` array, add after the `projetos` entry:
   { href: "/rentabilidade", label: "Rentabilidade", icon: "€" },
 ```
 
-- [ ] **Step 2: Write the client date selector `SeletorData.tsx`**
+- [x] **Step 2: Write the client date selector `SeletorData.tsx`**
 
 ```tsx
 "use client";
@@ -1182,7 +1182,7 @@ export function SeletorData({ data }: { data: string }) {
 }
 ```
 
-- [ ] **Step 3: Write the presentational `CartaoTecnico.tsx`**
+- [x] **Step 3: Write the presentational `CartaoTecnico.tsx`**
 
 ```tsx
 import { Avatar } from "@/components/ui/Avatar";
@@ -1254,7 +1254,7 @@ export function CartaoTecnico({ grupo }: { grupo: ResumoTecnico }) {
 }
 ```
 
-- [ ] **Step 4: Write the dashboard `page.tsx`**
+- [x] **Step 4: Write the dashboard `page.tsx`**
 
 ```tsx
 import Link from "next/link";
@@ -1364,16 +1364,16 @@ export default async function RentabilidadePage({
 }
 ```
 
-- [ ] **Step 5: Verify it compiles**
+- [x] **Step 5: Verify it compiles**
 
 Run: `npm run typecheck`
 Expected: PASS.
 
-- [ ] **Step 6: Manual verification**
+- [ ] **Step 6: Manual verification** — não corrido (regra: sem `next dev`). Coberto por typecheck.
 
 `npm run dev` → click "Rentabilidade" in the sidebar → pick a date with resolved incidências → per-técnico cards render with resultado/ocupação/break-even; the "Não rentáveis" list shows negative jobs worst-first.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src/components/Sidebar.tsx "src/app/(app)/rentabilidade/SeletorData.tsx" "src/app/(app)/rentabilidade/CartaoTecnico.tsx" "src/app/(app)/rentabilidade/page.tsx"
