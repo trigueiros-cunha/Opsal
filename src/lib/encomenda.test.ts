@@ -14,4 +14,13 @@ describe("encomenda", () => {
   it("lista vazia = 0", () => {
     expect(totalEncomenda([])).toBe(0);
   });
+
+  it("arredonda por linha antes de somar (consistente com o editor)", () => {
+    expect(
+      totalEncomenda([
+        { quantidade: 2.5, valor_unitario: 1.11 },
+        { quantidade: 2.5, valor_unitario: 1.11 },
+      ]),
+    ).toBe(5.56);
+  });
 });

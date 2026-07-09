@@ -86,6 +86,8 @@ export async function converterEmEncomenda(
     });
   }
 
+  // Fica marcado como comprado mesmo que a encomenda gerada seja depois
+  // apagada — o FK é "on delete set null", não reverte este estado.
   const { error: errUpd } = await db
     .from("lista_compras")
     .update({ comprado: true, encomenda_id: encomendaId })

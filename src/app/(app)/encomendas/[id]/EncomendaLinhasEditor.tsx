@@ -193,7 +193,7 @@ export function EncomendaLinhasEditor({
                   disabled={pending || !novo.descricao.trim()}
                   className="btn-primary px-2 py-1 text-xs"
                 >
-                  + Add
+                  Adicionar
                 </button>
               </td>
             </tr>

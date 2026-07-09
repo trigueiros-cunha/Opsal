@@ -8,6 +8,21 @@ import type {
   EncomendaLinha,
 } from "@/lib/types";
 
+type Db = ReturnType<typeof supabaseAdmin>;
+
+/** Remove o ficheiro de fatura atual do storage (se houver). */
+async function limparFaturaStorage(db: Db, id: string): Promise<void> {
+  const { data, error } = await db
+    .from("encomendas")
+    .select("fatura_ficheiro")
+    .eq("id", id)
+    .maybeSingle();
+  if (error) throw error;
+  const path = (data as { fatura_ficheiro: string | null } | null)
+    ?.fatura_ficheiro;
+  if (path) await db.storage.from(FOTOS_BUCKET).remove([path]);
+}
+
 const SELECT_LISTA = `
   *,
   apartamento:apartamentos ( id, codigo, regiao ),
@@ -125,14 +140,7 @@ export async function atualizarEncomenda(
 
 export async function apagarEncomenda(id: string): Promise<void> {
   const db = supabaseAdmin();
-  const { data } = await db
-    .from("encomendas")
-    .select("fatura_ficheiro")
-    .eq("id", id)
-    .maybeSingle();
-  const path = (data as { fatura_ficheiro: string | null } | null)
-    ?.fatura_ficheiro;
-  if (path) await db.storage.from(FOTOS_BUCKET).remove([path]);
+  await limparFaturaStorage(db, id);
   const { error } = await db.from("encomendas").delete().eq("id", id);
   if (error) throw error;
 }
@@ -170,7 +178,9 @@ export async function removerLinha(id: string): Promise<void> {
 }
 
 export async function definirFatura(id: string, path: string): Promise<void> {
-  const { error } = await supabaseAdmin()
+  const db = supabaseAdmin();
+  await limparFaturaStorage(db, id);
+  const { error } = await db
     .from("encomendas")
     .update({ fatura_ficheiro: path })
     .eq("id", id);
@@ -179,14 +189,7 @@ export async function definirFatura(id: string, path: string): Promise<void> {
 
 export async function removerFatura(id: string): Promise<void> {
   const db = supabaseAdmin();
-  const { data } = await db
-    .from("encomendas")
-    .select("fatura_ficheiro")
-    .eq("id", id)
-    .maybeSingle();
-  const path = (data as { fatura_ficheiro: string | null } | null)
-    ?.fatura_ficheiro;
-  if (path) await db.storage.from(FOTOS_BUCKET).remove([path]);
+  await limparFaturaStorage(db, id);
   const { error } = await db
     .from("encomendas")
     .update({ fatura_ficheiro: null })
