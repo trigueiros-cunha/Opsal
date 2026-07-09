@@ -4,9 +4,11 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { supabaseConfigurado } from "@/lib/supabase/admin";
 import { getEncomenda, listLinhas } from "@/lib/data/encomendas";
 import { listApartamentosSelect } from "@/lib/data/apartamentos";
+import { signedUrl } from "@/lib/data/storage";
 import { formatEuro } from "@/lib/format";
 import { EncomendaForm } from "../EncomendaForm";
 import { EncomendaLinhasEditor } from "./EncomendaLinhasEditor";
+import { FaturaPanel } from "./FaturaPanel";
 import { apagarEncomenda } from "../actions";
 
 export const dynamic = "force-dynamic";
@@ -21,9 +23,10 @@ export default async function EncomendaDetalhe({
   const enc = await getEncomenda(params.id);
   if (!enc) notFound();
 
-  const [linhas, apartamentos] = await Promise.all([
+  const [linhas, apartamentos, faturaUrl] = await Promise.all([
     listLinhas(enc.id),
     listApartamentosSelect(),
+    signedUrl(enc.fatura_ficheiro),
   ]);
 
   return (
@@ -45,6 +48,8 @@ export default async function EncomendaDetalhe({
         />
 
         <EncomendaLinhasEditor encomendaId={enc.id} linhas={linhas} />
+
+        <FaturaPanel encomendaId={enc.id} url={faturaUrl} />
 
         <form action={apagarEncomenda} className="flex justify-end">
           <input type="hidden" name="id" value={enc.id} />
