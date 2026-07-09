@@ -6,7 +6,7 @@ import type { ResumoTecnico } from "@/lib/data/rentabilidade";
 export function CartaoTecnico({ grupo }: { grupo: ResumoTecnico }) {
   const { tecnico, resumo } = grupo;
   const positivo = resumo.resultado >= 0;
-  const breakEven = Math.min(resumo.breakEvenPct, 100);
+  const breakEven = Math.max(0, Math.min(resumo.breakEvenPct, 100));
   return (
     <div className="card p-4">
       <div className="mb-3 flex items-center justify-between">
