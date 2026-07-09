@@ -6,6 +6,7 @@ import { getEncomenda, listLinhas } from "@/lib/data/encomendas";
 import { listApartamentosSelect } from "@/lib/data/apartamentos";
 import { formatEuro } from "@/lib/format";
 import { EncomendaForm } from "../EncomendaForm";
+import { EncomendaLinhasEditor } from "./EncomendaLinhasEditor";
 import { apagarEncomenda } from "../actions";
 
 export const dynamic = "force-dynamic";
@@ -24,7 +25,6 @@ export default async function EncomendaDetalhe({
     listLinhas(enc.id),
     listApartamentosSelect(),
   ]);
-  void linhas; // usado na Task 10 (editor de linhas)
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -43,6 +43,8 @@ export default async function EncomendaDetalhe({
           inicial={enc}
           apartamentos={apartamentos.map((a) => ({ id: a.id, codigo: a.codigo }))}
         />
+
+        <EncomendaLinhasEditor encomendaId={enc.id} linhas={linhas} />
 
         <form action={apagarEncomenda} className="flex justify-end">
           <input type="hidden" name="id" value={enc.id} />
