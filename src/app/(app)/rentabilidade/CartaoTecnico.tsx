@@ -23,26 +23,32 @@ export function CartaoTecnico({ grupo }: { grupo: ResumoTecnico }) {
         </span>
       </div>
 
-      <div className="grid grid-cols-3 gap-2 text-center text-xs text-slate-500">
-        <div>
-          <p className="font-semibold text-slate-700">{formatEuro(resumo.receita)}</p>
-          <p>Receita</p>
+      <dl className="space-y-1 text-sm">
+        <div className="flex items-center justify-between text-slate-600">
+          <dt>Receita</dt>
+          <dd className="font-mono">{formatEuro(resumo.receita)}</dd>
         </div>
-        <div>
-          <p className="font-semibold text-slate-700">{formatEuro(resumo.custoTotal)}</p>
-          <p>Custo</p>
+        {tecnico ? (
+          <div className="flex items-center justify-between text-slate-600">
+            <dt>− Custo do dia</dt>
+            <dd className="font-mono">{formatEuro(resumo.custoDia)}</dd>
+          </div>
+        ) : null}
+        <div className="flex items-center justify-between text-slate-600">
+          <dt>− Deslocações</dt>
+          <dd className="font-mono">{formatEuro(resumo.deslocacoes)}</dd>
         </div>
-        <div>
-          <p className="font-semibold text-slate-700">{resumo.nIntervencoes}</p>
-          <p>Intervenções</p>
+        <div className="flex items-center justify-between text-slate-600">
+          <dt>− Materiais</dt>
+          <dd className="font-mono">{formatEuro(resumo.materiais)}</dd>
         </div>
-      </div>
+      </dl>
 
       {tecnico ? (
         <div className="mt-3">
           <div className="mb-1 flex items-center justify-between text-xs text-slate-500">
             <span>
-              Break-even ({resumo.breakEvenPct}% de {formatEuro(resumo.custoFixoDia)})
+              Break-even ({resumo.breakEvenPct}% de {formatEuro(resumo.custoDia)})
             </span>
             <span>Ocupação {resumo.ocupacaoPct}%</span>
           </div>
@@ -53,13 +59,14 @@ export function CartaoTecnico({ grupo }: { grupo: ResumoTecnico }) {
             />
           </div>
           <p className="mt-1 text-xs text-slate-400">
-            {formatarTempo(resumo.minutosProdutivos) || "0min"} produtivos ·{" "}
+            {resumo.nIntervencoes} interv. ·{" "}
+            {formatarTempo(resumo.minutosProdutivos) || "0min"} ·{" "}
             {formatNumero(resumo.minutosProdutivos / 60)}h
           </p>
         </div>
       ) : (
         <p className="mt-3 text-xs text-slate-400">
-          Sem técnico atribuído — sem custo de tempo nem break-even.
+          Sem técnico — sem custo de dia nem break-even.
         </p>
       )}
     </div>

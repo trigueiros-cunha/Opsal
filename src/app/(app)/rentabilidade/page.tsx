@@ -93,7 +93,7 @@ export default async function RentabilidadePage({
                   </p>
                 </div>
                 <span className="shrink-0 text-sm font-bold text-red-600">
-                  {formatEuro(l.rentabilidade)}
+                  {formatEuro(l.valor)}
                 </span>
               </Link>
             ))}

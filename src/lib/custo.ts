@@ -34,13 +34,22 @@ export interface PL {
   rentabilidade: number;
 }
 
+export interface Contribuicao {
+  receita: number;
+  custoDeslocacao: number;
+  custoMateriais: number;
+  contribuicao: number;
+}
+
 export interface ResumoDia {
   receita: number;
-  custoTotal: number;
+  custoDia: number;
+  deslocacoes: number;
+  materiais: number;
+  contribuicao: number;
   resultado: number;
   nIntervencoes: number;
   minutosProdutivos: number;
-  custoFixoDia: number;
   ocupacaoPct: number;
   breakEvenPct: number;
 }
@@ -57,26 +66,20 @@ export function custoHoraCarregado(
   return round2((base ?? 0) * (1 + (taxaPct ?? 0) / 100));
 }
 
-/** P&L de uma incidência. Materiais = só linhas tipo 'material'. */
-export function plIncidencia(p: {
-  tempoMinutos: number | null | undefined;
-  custoHoraCarregado: number | null | undefined;
+/** Contribuição de uma incidência = preço − deslocação − materiais (sem mão de obra). */
+export function contribuicaoIncidencia(p: {
   deslocacaoValor: number | null | undefined;
   custosMateriais: number | null | undefined;
   precoProprietario: number | null | undefined;
-}): PL {
-  const custoTempo = maoDeObra(p.tempoMinutos, p.custoHoraCarregado) ?? 0;
+}): Contribuicao {
+  const receita = p.precoProprietario ?? 0;
   const custoDeslocacao = p.deslocacaoValor ?? 0;
   const custoMateriais = round2(p.custosMateriais ?? 0);
-  const custoTotal = round2(custoTempo + custoDeslocacao + custoMateriais);
-  const receita = p.precoProprietario ?? 0;
   return {
-    custoTempo,
+    receita,
     custoDeslocacao,
     custoMateriais,
-    custoTotal,
-    receita,
-    rentabilidade: round2(receita - custoTotal),
+    contribuicao: round2(receita - custoDeslocacao - custoMateriais),
   };
 }
 
@@ -97,31 +100,40 @@ export function plProjeto(p: {
   };
 }
 
-/** Agrega os P&L de um técnico num dia (ocupação, break-even).
- *  `custoHoraCarregado` é o do técnico do grupo. */
+/** Agrega o dia de um técnico: resultado = Σ contribuição − custo do dia (fixo). */
 export function resumoTecnicoDia(
-  itens: { pl: PL; tempoMinutos: number | null }[],
+  itens: { contrib: Contribuicao; tempoMinutos: number | null }[],
   cfg: { horasDiaPadrao: number; custoHoraCarregado: number },
 ): ResumoDia {
-  const receita = round2(itens.reduce((a, it) => a + it.pl.receita, 0));
-  const custoTotal = round2(itens.reduce((a, it) => a + it.pl.custoTotal, 0));
+  const receita = round2(itens.reduce((a, it) => a + it.contrib.receita, 0));
+  const deslocacoes = round2(
+    itens.reduce((a, it) => a + it.contrib.custoDeslocacao, 0),
+  );
+  const materiais = round2(
+    itens.reduce((a, it) => a + it.contrib.custoMateriais, 0),
+  );
+  const contribuicao = round2(
+    itens.reduce((a, it) => a + it.contrib.contribuicao, 0),
+  );
   const minutosProdutivos = itens.reduce(
     (a, it) => a + (it.tempoMinutos ?? 0),
     0,
   );
-  const custoFixoDia = round2(cfg.horasDiaPadrao * cfg.custoHoraCarregado);
+  const custoDia = round2(cfg.horasDiaPadrao * cfg.custoHoraCarregado);
   return {
     receita,
-    custoTotal,
-    resultado: round2(receita - custoTotal),
+    custoDia,
+    deslocacoes,
+    materiais,
+    contribuicao,
+    resultado: round2(contribuicao - custoDia),
     nIntervencoes: itens.length,
     minutosProdutivos,
-    custoFixoDia,
     ocupacaoPct:
       cfg.horasDiaPadrao > 0
         ? Math.round((minutosProdutivos / 60 / cfg.horasDiaPadrao) * 100)
         : 0,
     breakEvenPct:
-      custoFixoDia > 0 ? Math.round((receita / custoFixoDia) * 100) : 0,
+      custoDia > 0 ? Math.round((contribuicao / custoDia) * 100) : 0,
   };
 }

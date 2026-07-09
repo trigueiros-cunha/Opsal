@@ -2,10 +2,11 @@ import "server-only";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { getConfig } from "@/lib/data/config";
 import {
+  contribuicaoIncidencia,
   custoHoraCarregado,
-  plIncidencia,
   plProjeto,
   resumoTecnicoDia,
+  type Contribuicao,
   type PL,
   type ResumoDia,
 } from "@/lib/custo";
@@ -14,18 +15,18 @@ type Db = ReturnType<typeof supabaseAdmin>;
 
 const ESTADOS_CONCLUIDAS = ["resolvida", "fechada"] as const;
 
-export interface ItemPL {
+export interface ItemContrib {
   id: string;
   titulo: string;
   apartamento_codigo: string;
   tempoMinutos: number | null;
-  pl: PL;
+  contrib: Contribuicao;
 }
 
 export interface ResumoTecnico {
   tecnico: { id: string; nome: string; iniciais: string } | null;
   resumo: ResumoDia;
-  itens: ItemPL[];
+  itens: ItemContrib[];
 }
 
 export interface LinhaNaoRentavel {
@@ -33,7 +34,7 @@ export interface LinhaNaoRentavel {
   id: string;
   titulo: string;
   apartamento_codigo: string;
-  rentabilidade: number;
+  valor: number;
 }
 
 interface IncRow {
@@ -44,7 +45,12 @@ interface IncRow {
   preco_proprietario: number | null;
   tecnico_id: string | null;
   apartamento: { codigo: string } | null;
-  tecnico: { id: string; nome: string; iniciais: string; custo_hora: number } | null;
+  tecnico: {
+    id: string;
+    nome: string;
+    iniciais: string;
+    custo_hora: number;
+  } | null;
 }
 
 const SELECT_INC_PL = `
@@ -80,30 +86,21 @@ async function materiaisPorIncidencia(
   return soma;
 }
 
-function itemDeIncidencia(
-  row: IncRow,
-  materiais: number,
-  taxaEncargos: number,
-): ItemPL {
-  const pl = plIncidencia({
-    tempoMinutos: row.tempo_minutos,
-    custoHoraCarregado: row.tecnico
-      ? custoHoraCarregado(row.tecnico.custo_hora, taxaEncargos)
-      : null,
-    deslocacaoValor: row.deslocacao_valor,
-    custosMateriais: materiais,
-    precoProprietario: row.preco_proprietario,
-  });
+function itemDeIncidencia(row: IncRow, materiais: number): ItemContrib {
   return {
     id: row.id,
     titulo: row.titulo,
     apartamento_codigo: row.apartamento?.codigo ?? "—",
     tempoMinutos: row.tempo_minutos,
-    pl,
+    contrib: contribuicaoIncidencia({
+      deslocacaoValor: row.deslocacao_valor,
+      custosMateriais: materiais,
+      precoProprietario: row.preco_proprietario,
+    }),
   };
 }
 
-/** Resumo por técnico das incidências concluídas num dado dia (data efetiva de resolução). */
+/** Resumo por técnico das incidências concluídas num dado dia. */
 export async function resumoDia(dataISO: string): Promise<ResumoTecnico[]> {
   const db = supabaseAdmin();
   const cfg = await getConfig();
@@ -126,14 +123,14 @@ export async function resumoDia(dataISO: string): Promise<ResumoTecnico[]> {
     rows.map((r) => r.id),
   );
 
-  // Agrupar por técnico (chave null → bucket "sem técnico").
-  const grupos = new Map<string, { tecnico: IncRow["tecnico"]; itens: ItemPL[] }>();
+  const grupos = new Map<
+    string,
+    { tecnico: IncRow["tecnico"]; itens: ItemContrib[] }
+  >();
   for (const row of rows) {
     const chave = row.tecnico?.id ?? "__sem__";
     if (!grupos.has(chave)) grupos.set(chave, { tecnico: row.tecnico, itens: [] });
-    grupos
-      .get(chave)!
-      .itens.push(itemDeIncidencia(row, materiais.get(row.id) ?? 0, cfg.taxa_encargos_pct));
+    grupos.get(chave)!.itens.push(itemDeIncidencia(row, materiais.get(row.id) ?? 0));
   }
 
   const resultado: ResumoTecnico[] = [];
@@ -146,13 +143,12 @@ export async function resumoDia(dataISO: string): Promise<ResumoTecnico[]> {
         ? { id: tecnico.id, nome: tecnico.nome, iniciais: tecnico.iniciais }
         : null,
       resumo: resumoTecnicoDia(
-        itens.map((it) => ({ pl: it.pl, tempoMinutos: it.tempoMinutos })),
+        itens.map((it) => ({ contrib: it.contrib, tempoMinutos: it.tempoMinutos })),
         { horasDiaPadrao: cfg.horas_dia_padrao, custoHoraCarregado: chc },
       ),
       itens,
     });
   }
-  // Técnicos primeiro (piores/melhores por resultado desc), "sem técnico" no fim.
   resultado.sort((a, b) => {
     if (!a.tecnico) return 1;
     if (!b.tecnico) return -1;
@@ -161,9 +157,10 @@ export async function resumoDia(dataISO: string): Promise<ResumoTecnico[]> {
   return resultado;
 }
 
-export async function getPLIncidencia(id: string): Promise<PL | null> {
+export async function getContribIncidencia(
+  id: string,
+): Promise<Contribuicao | null> {
   const db = supabaseAdmin();
-  const cfg = await getConfig();
   const { data, error } = await db
     .from("incidencias")
     .select(SELECT_INC_PL)
@@ -173,7 +170,7 @@ export async function getPLIncidencia(id: string): Promise<PL | null> {
   if (!data) return null;
   const row = data as unknown as IncRow;
   const materiais = await materiaisPorIncidencia(db, [row.id]);
-  return itemDeIncidencia(row, materiais.get(row.id) ?? 0, cfg.taxa_encargos_pct).pl;
+  return itemDeIncidencia(row, materiais.get(row.id) ?? 0).contrib;
 }
 
 /** Σ (quantidade × valor_unitario) de todas as linhas de um projeto. */
@@ -203,13 +200,11 @@ export async function getPLProjeto(id: string): Promise<PL | null> {
   return plProjeto({ custos, orcamentoValor: proj.orcamento_valor });
 }
 
-/** Incidências concluídas + projetos concluídos com rentabilidade < 0, piores primeiro. */
+/** Incidências com contribuição < 0 + projetos concluídos com rentabilidade < 0. */
 export async function listNaoRentaveis(): Promise<LinhaNaoRentavel[]> {
   const db = supabaseAdmin();
-  const cfg = await getConfig();
   const linhas: LinhaNaoRentavel[] = [];
 
-  // Incidências concluídas
   const { data: incs, error: incErr } = await db
     .from("incidencias")
     .select(SELECT_INC_PL)
@@ -218,19 +213,18 @@ export async function listNaoRentaveis(): Promise<LinhaNaoRentavel[]> {
   const incRows = (incs ?? []) as unknown as IncRow[];
   const materiais = await materiaisPorIncidencia(db, incRows.map((r) => r.id));
   for (const row of incRows) {
-    const item = itemDeIncidencia(row, materiais.get(row.id) ?? 0, cfg.taxa_encargos_pct);
-    if (item.pl.rentabilidade < 0) {
+    const item = itemDeIncidencia(row, materiais.get(row.id) ?? 0);
+    if (item.contrib.contribuicao < 0) {
       linhas.push({
         kind: "inc",
         id: row.id,
         titulo: row.titulo,
         apartamento_codigo: item.apartamento_codigo,
-        rentabilidade: item.pl.rentabilidade,
+        valor: item.contrib.contribuicao,
       });
     }
   }
 
-  // Projetos concluídos
   const { data: projs, error: projErr } = await db
     .from("projetos")
     .select("id, titulo, orcamento_valor, apartamento:apartamentos ( codigo )")
@@ -251,11 +245,11 @@ export async function listNaoRentaveis(): Promise<LinhaNaoRentavel[]> {
         id: proj.id,
         titulo: proj.titulo,
         apartamento_codigo: proj.apartamento?.codigo ?? "—",
-        rentabilidade: pl.rentabilidade,
+        valor: pl.rentabilidade,
       });
     }
   }
 
-  linhas.sort((a, b) => a.rentabilidade - b.rentabilidade); // pior (mais negativo) primeiro
+  linhas.sort((a, b) => a.valor - b.valor); // pior (mais negativo) primeiro
   return linhas;
 }
