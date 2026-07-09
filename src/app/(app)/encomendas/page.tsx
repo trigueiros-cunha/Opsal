@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/Badge";
 import { supabaseConfigurado } from "@/lib/supabase/admin";
 import { listEncomendas } from "@/lib/data/encomendas";
 import { listPendentes } from "@/lib/data/lista_compras";
+import { listApartamentosSelect } from "@/lib/data/apartamentos";
 import { formatData, formatEuro } from "@/lib/format";
 import {
   ENCOMENDA_DESTINO_CLASSE,
@@ -14,6 +15,7 @@ import {
   ENCOMENDA_PAGAMENTO_CLASSE,
   ENCOMENDA_PAGAMENTO_LABEL,
 } from "@/lib/constants";
+import { ListaCompras } from "./ListaCompras";
 
 export const dynamic = "force-dynamic";
 
@@ -27,11 +29,11 @@ export default async function EncomendasPage() {
     );
   }
 
-  const [encomendas, pendentes] = await Promise.all([
+  const [encomendas, pendentes, apartamentos] = await Promise.all([
     listEncomendas(),
     listPendentes(),
+    listApartamentosSelect(),
   ]);
-  void pendentes; // usado na Task 7 (lista de compras)
 
   return (
     <>
@@ -44,6 +46,13 @@ export default async function EncomendasPage() {
           </Link>
         }
       />
+
+      <div className="mb-6">
+        <ListaCompras
+          itens={pendentes}
+          apartamentos={apartamentos.map((a) => ({ id: a.id, codigo: a.codigo }))}
+        />
+      </div>
 
       <section>
         <h2 className="mb-3 text-sm font-semibold text-slate-800">Encomendas</h2>
