@@ -1,5 +1,8 @@
 import type {
   CustoTipo,
+  EncomendaDestino,
+  EncomendaEstado,
+  EncomendaPagamento,
   IncidenciaEstado,
   Origem,
   Prioridade,
@@ -150,3 +153,47 @@ export const RECORRENTE_TIPOS: RecorrenteTipo[] = [
   "ralos",
   "caixas_wc",
 ];
+
+// ── Encomendas ───────────────────────────────────────────────────────────────
+export const ENCOMENDA_DESTINO_LABEL: Record<EncomendaDestino, string> = {
+  proprietario: "Proprietário",
+  stock: "Stock",
+  consumo: "Consumo",
+};
+
+export const ENCOMENDA_ESTADO_LABEL: Record<EncomendaEstado, string> = {
+  encomendada: "Encomendada",
+  recebida: "Recebida",
+};
+
+export const ENCOMENDA_PAGAMENTO_LABEL: Record<EncomendaPagamento, string> = {
+  por_pagar: "Por pagar",
+  pago: "Pago",
+};
+
+export const ENCOMENDA_DESTINOS: EncomendaDestino[] = [
+  "proprietario",
+  "stock",
+  "consumo",
+];
+export const ENCOMENDA_ESTADOS: EncomendaEstado[] = ["encomendada", "recebida"];
+export const ENCOMENDA_PAGAMENTOS: EncomendaPagamento[] = ["por_pagar", "pago"];
+
+/** Sugestões para o campo de método de pagamento (aceita texto livre). */
+export const METODOS_PAGAMENTO: string[] = [
+  "Dinheiro",
+  "Cartão",
+  "Transferência",
+  "MB Way",
+];
+
+export const ENCOMENDA_DESTINO_CLASSE: Record<EncomendaDestino, string> = {
+  proprietario: "bg-blue-100 text-blue-800 border-blue-200",
+  stock: "bg-violet-100 text-violet-800 border-violet-200",
+  consumo: "bg-slate-100 text-slate-700 border-slate-200",
+};
+
+export const ENCOMENDA_PAGAMENTO_CLASSE: Record<EncomendaPagamento, string> = {
+  por_pagar: "bg-amber-100 text-amber-800 border-amber-200",
+  pago: "bg-green-100 text-green-800 border-green-200",
+};

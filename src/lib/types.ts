@@ -29,6 +29,10 @@ export type ProjetoFase =
   | "execucao"
   | "concluido";
 
+export type EncomendaDestino = "proprietario" | "stock" | "consumo";
+export type EncomendaEstado = "encomendada" | "recebida";
+export type EncomendaPagamento = "por_pagar" | "pago";
+
 export type Semaforo = "verde" | "amarelo" | "vermelho";
 
 // ── Tabelas ──────────────────────────────────────────────────────────────────
@@ -148,6 +152,44 @@ export interface ProjetoCusto {
   criado_em: string;
 }
 
+export interface Encomenda {
+  id: string;
+  titulo: string | null;
+  destino: EncomendaDestino;
+  apartamento_id: string | null;
+  fornecedor: string | null;
+  data_encomenda: string; // date
+  estado: EncomendaEstado;
+  data_rececao: string | null; // date
+  pagamento: EncomendaPagamento;
+  metodo_pagamento: string | null;
+  fatura_ficheiro: string | null;
+  notas: string | null;
+  criado_em: string;
+  atualizado_em: string;
+}
+
+export interface EncomendaLinha {
+  id: string;
+  encomenda_id: string;
+  descricao: string;
+  quantidade: number;
+  valor_unitario: number;
+  ordem: number;
+  criado_em: string;
+}
+
+export interface ListaCompraItem {
+  id: string;
+  descricao: string;
+  quantidade: number;
+  apartamento_id: string | null;
+  notas: string | null;
+  comprado: boolean;
+  encomenda_id: string | null;
+  criado_em: string;
+}
+
 export interface Foto {
   id: string;
   incidencia_id: string | null;
@@ -166,6 +208,11 @@ export interface IncidenciaComRelacoes extends Incidencia {
 export interface ProjetoComRelacoes extends Projeto {
   apartamento: Pick<Apartamento, "id" | "codigo" | "regiao"> | null;
   tecnico: Pick<Tecnico, "id" | "nome" | "iniciais"> | null;
+}
+
+export interface EncomendaComRelacoes extends Encomenda {
+  apartamento: Pick<Apartamento, "id" | "codigo" | "regiao"> | null;
+  total: number; // Σ linhas (calculado)
 }
 
 export type EventoKind = "inc" | "rec" | "proj";

@@ -234,6 +234,65 @@ from recorrentes r
 join apartamentos a on a.id = r.apartamento_id
 where r.ativo;
 
+-- ── Encomendas (compras da empresa) ──────────────────────────────────────────
+do $$ begin
+  create type encomenda_destino as enum ('proprietario','stock','consumo');
+exception when duplicate_object then null; end $$;
+do $$ begin
+  create type encomenda_estado as enum ('encomendada','recebida');
+exception when duplicate_object then null; end $$;
+do $$ begin
+  create type encomenda_pagamento as enum ('por_pagar','pago');
+exception when duplicate_object then null; end $$;
+
+create table if not exists encomendas (
+  id               uuid primary key default gen_random_uuid(),
+  titulo           text,
+  destino          encomenda_destino not null,
+  apartamento_id   uuid references apartamentos(id),
+  fornecedor       text,
+  data_encomenda   date not null default current_date,
+  estado           encomenda_estado not null default 'encomendada',
+  data_rececao     date,
+  pagamento        encomenda_pagamento not null default 'por_pagar',
+  metodo_pagamento text,
+  fatura_ficheiro  text,
+  notas            text,
+  criado_em        timestamptz not null default now(),
+  atualizado_em    timestamptz not null default now()
+);
+create index if not exists encomendas_destino_idx on encomendas (destino);
+create index if not exists encomendas_apartamento_idx on encomendas (apartamento_id);
+
+create table if not exists encomenda_linhas (
+  id             uuid primary key default gen_random_uuid(),
+  encomenda_id   uuid not null references encomendas(id) on delete cascade,
+  descricao      text not null,
+  quantidade     numeric(10,2) not null default 1,
+  valor_unitario numeric(10,2) not null default 0,
+  ordem          int not null default 0,
+  criado_em      timestamptz not null default now()
+);
+create index if not exists encomenda_linhas_encomenda_idx
+  on encomenda_linhas (encomenda_id);
+
+create table if not exists lista_compras (
+  id             uuid primary key default gen_random_uuid(),
+  descricao      text not null,
+  quantidade     numeric(10,2) not null default 1,
+  apartamento_id uuid references apartamentos(id),
+  notas          text,
+  comprado       boolean not null default false,
+  encomenda_id   uuid references encomendas(id) on delete set null,
+  criado_em      timestamptz not null default now()
+);
+create index if not exists lista_compras_pendentes_idx
+  on lista_compras (criado_em) where not comprado;
+
+drop trigger if exists encomendas_atualizado_em on encomendas;
+create trigger encomendas_atualizado_em before update on encomendas
+  for each row execute function set_atualizado_em();
+
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Storage: criar bucket privado `manutencao-fotos` (Dashboard → Storage) e
 -- servir sempre via signed URLs. Não é criado por SQL aqui.
