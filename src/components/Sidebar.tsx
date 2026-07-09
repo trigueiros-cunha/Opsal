@@ -9,6 +9,7 @@ const LINKS: { href: string; label: string; icon: string }[] = [
   { href: "/incidencias", label: "Incidências", icon: "▲" },
   { href: "/recorrentes", label: "Recorrentes", icon: "↻" },
   { href: "/projetos", label: "Projetos", icon: "◆" },
+  { href: "/encomendas", label: "Encomendas", icon: "📦" },
   { href: "/rentabilidade", label: "Rentabilidade", icon: "€" },
   { href: "/tecnicos", label: "Técnicos", icon: "☺" },
   { href: "/apartamentos", label: "Apartamentos", icon: "⌂" },
